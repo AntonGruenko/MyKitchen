@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/nav_feed"
+        android:icon="@drawable/ic_baseline_recipe_24"
+        android:title="Рецепты"/>
+
+    <item
+        android:id="@+id/nav_shopping_list"
+        android:icon="@drawable/ic_baseline_checklist_rtl_24"
+        android:title="Список покупок"/>
+
+    <item
+        android:id="@+id/nav_create"
+        android:icon="@drawable/ic_baseline_plus_24"
+        android:title="Поделиться"/>
+
+    <item
+        android:id="@+id/nav_posts"
+        android:icon="@drawable/ic_baseline_newspaper_24"
+        android:title="Блоги"/>
+
+    <item
+        android:id="@+id/nav_profile"
+        android:icon="@drawable/ic_baseline_person_24"
+        android:title="Мой профиль"/>
+
+</menu>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Widget.BottomNavigationView"
+        parent="Widget.Design.BottomNavigationView">
+        <item name="fontFamily">@font/montserratalternates_regular</item>
+    </style>
+
+    <style name="ComplexityBar" parent="@android:style/Widget.RatingBar">
+        <item name="android:progressDrawable">@drawable/complexity_bar</item>
+        <item name="android:minHeight">28dip</item>
+        <item name="android:maxHeight">36dip</item>
+    </style>
+</resources>
