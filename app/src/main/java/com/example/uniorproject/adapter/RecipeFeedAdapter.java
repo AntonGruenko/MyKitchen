@@ -16,15 +16,17 @@ import com.example.uniorproject.noDb.NoDb;
 
 import java.util.List;
 
-public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    Context context;
-    LayoutInflater layoutInflater;
-    List<Recipe> recipeList;
+public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
+    private Context context;
+    private LayoutInflater layoutInflater;
+    private List<Recipe> recipeList;
+    private final OnRecipeClickListener listener;
 
-    public RecipeAdapter(Context context, List<Recipe> recipeList) {
+    public RecipeFeedAdapter(Context context, List<Recipe> recipeList, OnRecipeClickListener listener) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.recipeList = recipeList;
+        this.listener = listener;
     }
 
     @NonNull
@@ -38,10 +40,21 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         Recipe recipe = NoDb.RECIPE_LIST.get(position);
+        int minutes, hours;
+        hours = recipe.getTime()/60;
+        minutes = recipe.getTime() - hours * 60;
+        ((RecipeHolder)holder).authorNameText.setText(recipe.getAuthor().getName());
         ((RecipeHolder)holder).nameText.setText(recipe.getName());
-        ((RecipeHolder)holder).timeText.setText(String.valueOf(recipe.getTime()));
+        ((RecipeHolder)holder).timeText.setText(String.format("%d:%d", hours, minutes));
         ((RecipeHolder)holder).kcalText.setText(String.valueOf(recipe.getKcal()));
         ((RecipeHolder)holder).likesText.setText(String.valueOf(recipe.getLikes()));
+
+        ((RecipeHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                listener.onClick(recipe, holder.getAdapterPosition());
+            }
+        });
     }
 
     @Override
@@ -50,6 +63,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     private class RecipeHolder extends RecyclerView.ViewHolder {
         private ImageView imageView;
         private TextView
+                authorNameText,
                 nameText,
                 timeText,
                 kcalText,
@@ -60,11 +74,16 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(itemView);
 
             imageView = itemView.findViewById(R.id.item_picture);
+            authorNameText = itemView.findViewById(R.id.item_author_name);
             nameText = itemView.findViewById(R.id.item_name);
             kcalText = itemView.findViewById(R.id.item_kcal);
             timeText = itemView.findViewById(R.id.item_time);
             likesText = itemView.findViewById(R.id.item_likes);
         }
 
+    }
+
+    public interface OnRecipeClickListener{
+        void onClick(Recipe recipe, int position);
     }
 }

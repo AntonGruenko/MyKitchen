@@ -1,24 +1,40 @@
 package com.example.uniorproject.fragment;
 
+import static android.app.Activity.RESULT_OK;
+
+import android.content.ContentResolver;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.net.Uri;
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import android.provider.MediaStore;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.webkit.MimeTypeMap;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentCreateRecipeBinding;
-import com.example.uniorproject.domain.Post;
 import com.example.uniorproject.noDb.NoDb;
-import com.example.uniorproject.rest.LibraryAPIVolley;
+import com.example.uniorproject.rest.VolleyAPI;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 public class CreateRecipeFragment extends Fragment {
+    private Uri imageUri;
+    private ImageView recipeImage;
+    private StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -64,5 +80,50 @@ public class CreateRecipeFragment extends Fragment {
         });
 
         return view;
+    }
+
+    private void openFileChooser(){
+
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        startActivityForResult(intent, 1);
+
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
+            imageUri = data.getData();
+            recipeImage = getActivity().findViewById(R.id.recipe_image);
+            Picasso.with(getContext()).load(imageUri).into(recipeImage);
+            recipeImage.setImageURI(imageUri);
+            uploadPicture();
+
+        }
+    }
+    private String getFileExtension(Uri uri){
+        ContentResolver contentResolver = getActivity().getContentResolver();
+        MimeTypeMap mime = MimeTypeMap.getSingleton();
+        return  mime.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+
+    private void uploadPicture(){
+        if(imageUri != null) {
+            String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
+
+            StorageReference fileReference = storageReference.child(fileName);
+            fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            NoDb.PICTURE_LINK_LIST.add(0, imageUri.toString());
+                        }
+                    });
+                }
+            });
+        }
     }
 }

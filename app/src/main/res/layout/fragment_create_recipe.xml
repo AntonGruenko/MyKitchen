@@ -18,7 +18,9 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintBottom_toTopOf="@id/filledTextField_Title"
-            android:layout_marginTop="16dp" />
+            android:layout_marginTop="16dp"
+            android:background="@drawable/ic_baseline_camera_alt_24"
+            android:backgroundTint="@color/light_grey"/>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/filledTextField_Title"
@@ -128,6 +130,7 @@
             android:layout_height="match_parent"
             android:rating="4"
             android:numStars="5"
+            android:stepSize="1"
             style="@style/ComplexityBar"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"

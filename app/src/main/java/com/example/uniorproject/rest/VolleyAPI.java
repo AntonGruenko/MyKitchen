@@ -3,9 +3,7 @@ package com.example.uniorproject.rest;
 import android.content.Context;
 import android.util.Log;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
 
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
@@ -13,40 +11,42 @@ import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uniorproject.MainActivity;
-import com.example.uniorproject.R;
+import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Post;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.domain.User;
+import com.example.uniorproject.domain.mapper.PictureMapper;
 import com.example.uniorproject.domain.mapper.PostMapper;
 import com.example.uniorproject.domain.mapper.RecipeMapper;
 import com.example.uniorproject.domain.mapper.UserMapper;
-import com.example.uniorproject.fragment.FeedFragment;
 import com.example.uniorproject.noDb.NoDb;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
-public class LibraryAPIVolley implements AppAPI{
+public class VolleyAPI implements AppAPI{
 
     public static final String API = "API";
     private final Context context;
-    private static final String BASE_URL = "https://f27a-109-94-26-0.eu.ngrok.io";
+    public static final String BASE_URL = "https://0625-109-94-21-26.eu.ngrok.io";
     private Response.ErrorListener errorListener;
 
 
 
-    public LibraryAPIVolley(Context context) {
+    public VolleyAPI(Context context) {
         this.context = context;
-        errorListener = error -> Log.d(API, error.toString());
+        errorListener = error -> {
+            Log.d(API, error.toString());
+
+        };
     }
 
     @Override
@@ -68,7 +68,6 @@ public class LibraryAPIVolley implements AppAPI{
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 User user = UserMapper.userFromJson(jsonObject);
                                 NoDb.USER_LIST.add(user);
-
                                 Log.d(API, user.getName());
                             }
                         }
@@ -106,7 +105,11 @@ public class LibraryAPIVolley implements AppAPI{
 
                                 Log.d(API, recipe.getName());
 
-                                ((MainActivity)context).updateRecipeAdapter();
+                                try {
+                                    ((MainActivity) context).updateRecipeAdapter();
+                                } catch(NullPointerException e){
+
+                                }
                             }
                         }
                         catch (JSONException e) {
@@ -119,6 +122,35 @@ public class LibraryAPIVolley implements AppAPI{
         );
 
         requestQueue.add(jsonArrayRequest);
+    }
+
+    public void findUserByEmail(String email, VolleyCallback callback){
+
+        String url = BASE_URL + "/user/email/" + email;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        callback.onSuccess(response);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
+        );
+
+        requestQueue.add(jsonObjectRequest);
+
+
     }
 
     @Override
@@ -143,8 +175,45 @@ public class LibraryAPIVolley implements AppAPI{
 
                                 Log.d(API, post.getText());
 
-                                ((MainActivity) context).updatePostAdapter();
+                                try {
+                                    ((MainActivity) context).updatePostAdapter();
+                                }
+                                catch (NullPointerException e){
 
+                                }
+                            }
+                        }
+                        catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                },
+
+                errorListener
+        );
+
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    @Override
+    public void fillPicture() {
+        String url = BASE_URL + "/pictures";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        NoDb.PICTURE_LIST.clear();
+                        try {
+                            for (int i = 0; i < response.length(); i++) {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                Picture picture = PictureMapper.pictureFromJson(jsonObject);
+                                NoDb.PICTURE_LIST.add(picture);
                             }
                         }
                         catch (JSONException e) {
@@ -271,6 +340,40 @@ public class LibraryAPIVolley implements AppAPI{
                 params.put("text", post.getText());
                 params.put("picture", post.getPicture());
                 params.put("likes", String.valueOf(post.getLikes()));
+
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void addPicture(Picture picture) {
+        String url = BASE_URL + "/pictures";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>(){
+
+                    @Override
+                    public void onResponse(String response) {
+                        fillPicture();
+                    }
+                },
+                errorListener) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("link", picture.getLink());
+                params.put("recipe", String.valueOf(picture.getRecipe().getId()));
+                params.put("number", String.valueOf(picture.getNumber()));
 
                 return params;
             }

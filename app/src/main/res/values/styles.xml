@@ -10,4 +10,8 @@
         <item name="android:minHeight">28dip</item>
         <item name="android:maxHeight">36dip</item>
     </style>
+
+    <style name="circularImageView">
+        <item name="cornerSize">50% </item>
+    </style>
 </resources>

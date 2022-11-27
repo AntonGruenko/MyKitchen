@@ -3,21 +3,18 @@ package com.example.uniorproject;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.fragment.app.Fragment;
 
+import android.content.Context;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.util.Log;
 
 import com.example.uniorproject.databinding.ActivityMainBinding;
-import com.example.uniorproject.domain.Post;
-import com.example.uniorproject.domain.User;
 import com.example.uniorproject.fragment.CreateFragment;
 import com.example.uniorproject.fragment.FeedFragment;
 import com.example.uniorproject.fragment.PostFragment;
 import com.example.uniorproject.fragment.ProfileFragment;
 import com.example.uniorproject.fragment.ShoppingListFragment;
-import com.example.uniorproject.noDb.NoDb;
-import com.example.uniorproject.rest.LibraryAPIVolley;
-
-import java.util.concurrent.TimeUnit;
+import com.example.uniorproject.rest.VolleyAPI;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -26,11 +23,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        SharedPreferences sp = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        boolean firstLaunch = sp.getBoolean("unlogined", true);
+        if (firstLaunch) {
+            Intent firstLaunchIntent = new Intent(MainActivity.this, LoginActivity.class);
+            startActivity(firstLaunchIntent);
+        }
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        new LibraryAPIVolley(this).fillUser();
-        new LibraryAPIVolley(this).fillRecipe();
+        new VolleyAPI(this).fillUser();
+        new VolleyAPI(this).fillRecipe();
 
         changeFragment(new FeedFragment());
 
@@ -58,7 +61,6 @@ public class MainActivity extends AppCompatActivity {
                     return true;
                 }
         );
-
     }
 
     private boolean changeFragment(Fragment fragment) {

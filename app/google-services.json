@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "610549809212",
+    "firebase_url": "https://uniorproject-default-rtdb.europe-west1.firebasedatabase.app",
+    "project_id": "uniorproject",
+    "storage_bucket": "uniorproject.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:610549809212:android:a218357093bbd6ed6cc339",
+        "android_client_info": {
+          "package_name": "com.example.uniorproject"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "610549809212-u2p0qdo2vbjmnditor1jicmr7282pj9i.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDfVGE6Ma5o9KCQLjm9qilzFabaEjnw0Yo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "610549809212-u2p0qdo2vbjmnditor1jicmr7282pj9i.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

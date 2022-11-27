@@ -9,11 +9,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
-import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.PostAdapter;
 import com.example.uniorproject.databinding.FragmentPostBinding;
 import com.example.uniorproject.noDb.NoDb;
-import com.example.uniorproject.rest.LibraryAPIVolley;
+import com.example.uniorproject.rest.VolleyAPI;
 
 public class PostFragment extends Fragment {
     private PostAdapter postAdapter;
@@ -23,7 +22,7 @@ public class PostFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentPostBinding binding = FragmentPostBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
-        new LibraryAPIVolley(getActivity()).fillPost();
+        new VolleyAPI(getActivity()).fillPost();
 
         postAdapter = new PostAdapter(getActivity(), NoDb.POST_LIST);
         binding.postsRv.setLayoutManager(new LinearLayoutManager(getActivity()));

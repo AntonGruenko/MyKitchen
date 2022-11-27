@@ -22,6 +22,29 @@ public class Post {
         this.likes = likes;
     }
 
+    public Post() {
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public void setPicture(String picture) {
+        this.picture = picture;
+    }
+
+    public void setLikes(int likes) {
+        this.likes = likes;
+    }
+
     public int getId() {
         return id;
     }

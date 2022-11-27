@@ -1,0 +1,219 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".fragment.RecipeFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_title"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_semibold"
+            android:gravity="center"
+            android:text="title"
+            android:textSize="24sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_author_name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="left"
+            android:text="author"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_title"
+            android:layout_marginHorizontal="32dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:drawableLeft="@drawable/ic_baseline_access_time_24"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="left"
+            android:text="time"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_author_name"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_kcal"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="left"
+            android:drawableLeft="@drawable/ic_baseline_fire_24"
+            android:text="kcal"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_time"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_proteins"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="left"
+            android:text="proteins"
+            android:textSize="16sp"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_kcal"
+            app:layout_constraintEnd_toStartOf="@id/recipe_fats"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_fats"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="right"
+            android:text="fats"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toEndOf="@id/recipe_proteins"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_kcal"
+            android:layout_marginEnd="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_carbohydrates"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="left"
+            android:text="carbohydrates"
+            android:textSize="16sp"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_proteins"
+            app:layout_constraintEnd_toStartOf="@id/recipe_sugar"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_sugar"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="right"
+            android:text="sugar"
+            android:textSize="16sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="2"
+            app:layout_constraintStart_toEndOf="@id/recipe_proteins"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_proteins"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <RatingBar
+            android:id="@+id/recipe_complexity"
+            style="@style/ComplexityBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:numStars="5"
+            android:isIndicator="true"
+            android:rating="4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_carbohydrates"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_recommendations"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:gravity="left"
+            android:text="recommendations"
+            android:textSize="20sp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_complexity"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipe_ingredients"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_tags" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/copy_ingredients_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_orange"
+            android:fontFamily="@font/montserratalternates_semibold"
+            android:gravity="center"
+            android:text="Добавить в список покупок"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_ingredients"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipe_guide"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/copy_ingredients_button" />
+
+        <com.google.android.material.textview.MaterialTextView
+            android:id="@+id/recipe_likes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textSize="16sp"
+            android:text="likes"
+            android:drawableLeft="@drawable/ic_baseline_thumb_up_24"
+            android:fontFamily="@font/montserratalternates_medium"
+            app:layout_constraintTop_toBottomOf="@id/recipe_guide"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipe_tags"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginVertical="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_recommendations" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+
+</ScrollView>
