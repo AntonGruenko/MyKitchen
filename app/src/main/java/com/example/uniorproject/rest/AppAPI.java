@@ -13,7 +13,7 @@ public interface AppAPI {
     void fillPicture();
 
     void addUser(User user);
-    void addRecipe(Recipe recipe);
+    void addRecipe(Recipe recipe, VolleyCallback callback);
     void addPost(Post post);
 
     void addPicture(Picture picture);

@@ -6,15 +6,21 @@ import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.VolleyError;
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentSetRecipeNutritionalValueBinding;
+import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
+import com.example.uniorproject.rest.VolleyCallback;
+
+import org.json.JSONObject;
 
 public class SetRecipeNutritionalValue extends Fragment {
 
@@ -79,11 +85,26 @@ public class SetRecipeNutritionalValue extends Fragment {
                         recipeComplexity,
                         recipeTags);
 
-                new VolleyAPI(getActivity()).addRecipe(recipe);
+                new VolleyAPI(getActivity()).addRecipe(recipe, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        new VolleyAPI(getActivity()).addPicture(new Picture(recipeSharedPreferences.getString("mainPicture", ""), NoDb.RECIPE_LIST.get(NoDb.RECIPE_LIST.size() - 1), 0));
+                        for (int i = 0; i < NoDb.PICTURE_LINK_LIST.size(); i++) {
 
-                NoDb.SELECTED_TAG_LIST.clear();
-                NoDb.GUIDE_LIST.clear();
-                NoDb.INGREDIENTS_LIST.clear();
+                            new VolleyAPI(getActivity()).addPicture(new Picture(NoDb.PICTURE_LINK_LIST.get(i), NoDb.RECIPE_LIST.get(NoDb.RECIPE_LIST.size() - 1), i+1));
+                        }
+
+                        NoDb.SELECTED_TAG_LIST.clear();
+                        NoDb.GUIDE_LIST.clear();
+                        NoDb.INGREDIENTS_LIST.clear();
+                        NoDb.PICTURE_LINK_LIST.clear();
+                    }
+
+                    @Override
+                    public void onError(VolleyError error) {
+
+                    }
+                });
             }
         });
         return view;

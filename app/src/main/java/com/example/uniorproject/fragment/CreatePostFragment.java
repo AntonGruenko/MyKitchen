@@ -122,7 +122,6 @@ public class CreatePostFragment extends Fragment {
                     fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            Log.d("sas", uri.toString());
                             post.setPicture(uri.toString());
                         }
                     });

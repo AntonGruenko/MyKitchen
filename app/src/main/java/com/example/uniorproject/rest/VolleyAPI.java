@@ -1,5 +1,7 @@
 package com.example.uniorproject.rest;
 
+import static android.content.ContentValues.TAG;
+
 import android.content.Context;
 import android.util.Log;
 
@@ -36,10 +38,8 @@ public class VolleyAPI implements AppAPI{
 
     public static final String API = "API";
     private final Context context;
-    public static final String BASE_URL = "https://0625-109-94-21-26.eu.ngrok.io";
+    public static final String BASE_URL = "https://98c1-176-109-46-57.eu.ngrok.io";
     private Response.ErrorListener errorListener;
-
-
 
     public VolleyAPI(Context context) {
         this.context = context;
@@ -197,7 +197,7 @@ public class VolleyAPI implements AppAPI{
 
     @Override
     public void fillPicture() {
-        String url = BASE_URL + "/pictures";
+        String url = BASE_URL + "/picture";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
 
@@ -214,11 +214,18 @@ public class VolleyAPI implements AppAPI{
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Picture picture = PictureMapper.pictureFromJson(jsonObject);
                                 NoDb.PICTURE_LIST.add(picture);
+
+                                try {
+                                    ((MainActivity) context).updateRecipeAdapter();
+                                } catch(NullPointerException e){
+
+                                }
                             }
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
                         }
+
                     }
                 },
 
@@ -226,6 +233,44 @@ public class VolleyAPI implements AppAPI{
         );
 
         requestQueue.add(jsonArrayRequest);
+    }
+
+    public void findPicturesByRecipe(int id, VolleyCallback callback){
+        String url = BASE_URL + "/picture/recipe/" + id;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                JSONObject jsonObject = response.getJSONObject(i);
+                                callback.onSuccess(jsonObject);
+                                try {
+                                    ((MainActivity) context).updateCurrentRecipeAdapter();
+                                }
+                                catch (NullPointerException e){}
+
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                    }
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
+        );
+
+        requestQueue.add(jsonArrayRequest);
+
+
     }
 
     @Override
@@ -267,7 +312,7 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
-    public void addRecipe(Recipe recipe) {
+    public void addRecipe(Recipe recipe, VolleyCallback callback) {
         String url = BASE_URL + "/recipe";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -281,6 +326,7 @@ public class VolleyAPI implements AppAPI{
                     public void onResponse(String response) {
                         fillRecipe();
                         Log.d(API, response);
+                        callback.onSuccess(null);
                     }
                 },
                 errorListener) {
@@ -350,7 +396,7 @@ public class VolleyAPI implements AppAPI{
 
     @Override
     public void addPicture(Picture picture) {
-        String url = BASE_URL + "/pictures";
+        String url = BASE_URL + "/picture";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
 
@@ -372,7 +418,7 @@ public class VolleyAPI implements AppAPI{
                 Map<String, String> params = new HashMap<>();
 
                 params.put("link", picture.getLink());
-                params.put("recipe", String.valueOf(picture.getRecipe().getId()));
+                params.put("recipeId", String.valueOf(picture.getRecipe().getId()));
                 params.put("number", String.valueOf(picture.getNumber()));
 
                 return params;

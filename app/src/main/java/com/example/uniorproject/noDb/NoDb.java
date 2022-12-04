@@ -22,5 +22,6 @@ public class NoDb {
     public static final List<String> TAG_LIST = new ArrayList<>();
     public static final List<String> SELECTED_TAG_LIST = new ArrayList<>();
     public static final List<Product> PRODUCT_LIST = new ArrayList<>();
+    public static final List<Picture> RECIPE_PICTURE_LIST = new ArrayList<>();
 
 }

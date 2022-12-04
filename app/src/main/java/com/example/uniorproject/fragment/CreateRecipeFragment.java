@@ -35,6 +35,8 @@ public class CreateRecipeFragment extends Fragment {
     private Uri imageUri;
     private ImageView recipeImage;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
+    SharedPreferences sharedPreferences;
+    SharedPreferences.Editor editor;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -47,6 +49,7 @@ public class CreateRecipeFragment extends Fragment {
         FragmentCreateRecipeBinding binding = FragmentCreateRecipeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
 
+        NoDb.PICTURE_LINK_LIST.add("");
         binding.buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -62,8 +65,8 @@ public class CreateRecipeFragment extends Fragment {
                     String recipeRecommendations = binding.editRecommendations.getText().toString();
                     int recipeComplexity = (int) binding.complexity.getRating();
 
-                    SharedPreferences sharedPreferences = getActivity().getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
-                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    sharedPreferences = getActivity().getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+                    editor = sharedPreferences.edit();
                     editor.putString("recipeName", recipeName);
                     editor.putInt("recipeTime", recipeTime);
                     editor.putString("recipeRecommendations", recipeRecommendations);
@@ -76,6 +79,13 @@ public class CreateRecipeFragment extends Fragment {
                             .replace(R.id.create_container, fragment, "setIngredients")
                             .commit();
                 }
+            }
+        });
+
+        binding.recipeImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openFileChooser();
             }
         });
 
@@ -111,7 +121,8 @@ public class CreateRecipeFragment extends Fragment {
     private void uploadPicture(){
         if(imageUri != null) {
             String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
-
+            sharedPreferences = getActivity().getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+            editor = sharedPreferences.edit();
             StorageReference fileReference = storageReference.child(fileName);
             fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -119,7 +130,8 @@ public class CreateRecipeFragment extends Fragment {
                     fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            NoDb.PICTURE_LINK_LIST.add(0, imageUri.toString());
+                            editor.putString("mainPicture", uri.toString());
+                            editor.apply();
                         }
                     });
                 }

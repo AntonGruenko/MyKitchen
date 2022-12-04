@@ -6,16 +6,25 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.android.volley.VolleyError;
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.RecipeDataAdapter;
 import com.example.uniorproject.database.ShoppingListDatabase;
 import com.example.uniorproject.databinding.FragmentRecipeBinding;
+import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Recipe;
+import com.example.uniorproject.domain.mapper.PictureMapper;
 import com.example.uniorproject.noDb.NoDb;
+import com.example.uniorproject.rest.VolleyAPI;
+import com.example.uniorproject.rest.VolleyCallback;
+
+import org.json.JSONObject;
 
 import java.util.Arrays;
 import java.util.List;
@@ -34,7 +43,6 @@ public class RecipeFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
@@ -42,6 +50,7 @@ public class RecipeFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentRecipeBinding binding = FragmentRecipeBinding.inflate(inflater);
         View view = binding.getRoot();
+
         Recipe recipe = NoDb.RECIPE_LIST.get(recipeId);
 
         hours = recipe.getTime()/60;
@@ -64,15 +73,15 @@ public class RecipeFragment extends Fragment {
         guide = convertStringToList(recipe.getGuide());
         tags = convertStringToList(recipe.getTags());
 
-        ingredientsAdapter = new RecipeDataAdapter(getActivity(), ingredients);
+        ingredientsAdapter = new RecipeDataAdapter(getActivity(), ingredients, 1);
         binding.recipeIngredients.setAdapter(ingredientsAdapter);
         binding.recipeIngredients.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        guideAdapter = new RecipeDataAdapter(getActivity(), guide);
+        guideAdapter = new RecipeDataAdapter(getActivity(), guide,2, NoDb.PICTURE_LIST);
         binding.recipeGuide.setAdapter(guideAdapter);
         binding.recipeGuide.setLayoutManager(new LinearLayoutManager(getActivity()));
 
-        tagsAdapter = new RecipeDataAdapter(getActivity(), tags);
+        tagsAdapter = new RecipeDataAdapter(getActivity(), tags, 1);
         binding.recipeTags.setAdapter(tagsAdapter);
         binding.recipeTags.setLayoutManager(new GridLayoutManager(getActivity(), 3));
 
@@ -81,9 +90,11 @@ public class RecipeFragment extends Fragment {
             public void onClick(View view) {
                 for (int i = 0; i < ingredients.size(); i++) {
                     database.insert(database.length(), ingredients.get(i));
+                    guideAdapter.notifyDataSetChanged();
                 }
             }
         });
+
         return view;
     }
 
@@ -91,5 +102,9 @@ public class RecipeFragment extends Fragment {
         List<String> elements;
         elements = Arrays.asList(data.split(";;"));
         return elements;
+    }
+
+    public void updateAdapter(){
+        guideAdapter.notifyDataSetChanged();
     }
 }

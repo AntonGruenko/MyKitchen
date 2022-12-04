@@ -1,41 +1,34 @@
 package com.example.uniorproject.adapter;
 
-import static android.app.Activity.RESULT_OK;
-
-import android.app.Activity;
-import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
-import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.inputmethod.EditorInfo;
-import android.webkit.MimeTypeMap;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
-import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.noDb.NoDb;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
+import java.io.IOException;
+import java.net.URL;
 import java.util.List;
 
 public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
@@ -65,12 +58,20 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
         String content = contentList.get(position);
         int pos = position;
+
         ((RecipeCreatorHolder)holder).editContent.setText(content);
         if(fragmentType == 1){
             ((RecipeCreatorHolder) holder).editContent.setHint("Ингредиент");
         }
         else {
             ((RecipeCreatorHolder) holder).editContent.setHint("Шаг");
+            try {
+                Picasso.with(context).load(NoDb.PICTURE_LINK_LIST.get(pos)).into(((RecipeCreatorHolder) holder).contentImage);
+            }
+            catch (IllegalArgumentException e){
+
+            }
+
         }
         ((RecipeCreatorHolder)holder).editContent.addTextChangedListener(new TextWatcher() {
             @Override
@@ -80,11 +81,15 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if(fragmentType == 1) {
-                    NoDb.INGREDIENTS_LIST.set(pos, charSequence.toString());
+                try {
+                    if (fragmentType == 1) {
+                        NoDb.INGREDIENTS_LIST.set(pos, charSequence.toString());
+                    } else {
+                        NoDb.GUIDE_LIST.set(pos, charSequence.toString());
+                    }
                 }
-                else{
-                    NoDb.GUIDE_LIST.set(pos, charSequence.toString());
+                catch (IndexOutOfBoundsException e){
+                    e.printStackTrace();
                 }
             }
 
@@ -94,8 +99,13 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
             }
         });
 
-        if(fragmentType == 1){
-
+        if(fragmentType == 2){
+            ((RecipeCreatorHolder) holder).contentImage.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    openFileChooser(pos);
+                }
+            });
         }
     }
 
@@ -108,7 +118,7 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
         return contentList.size();
     }
 
-    private class RecipeCreatorHolder extends RecyclerView.ViewHolder {
+    public class RecipeCreatorHolder extends RecyclerView.ViewHolder {
         private Button deleteButton;
         private ImageView contentImage;
         private TextInputEditText editContent;
@@ -130,13 +140,15 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                     else if(fragmentType == 2 && NoDb.GUIDE_LIST.size() > 1){
                         NoDb.GUIDE_LIST.remove(getAdapterPosition());
+                        contentImage.setImageDrawable(null);
+                        NoDb.PICTURE_LINK_LIST.remove(getAdapterPosition());
                         recipeCreatorAdapter.notifyItemRemoved(getAdapterPosition());
                     }
                 }
 
             });
 
-            if(fragmentType == 2){
+            if(fragmentType == 1){
                 contentImage.setVisibility(View.GONE);
             }
 
@@ -146,6 +158,17 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
             this.recipeCreatorAdapter = adapter;
             return this;
         }
+
+    }
+
+    private void openFileChooser(int position){
+
+        Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+        SharedPreferences sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putInt("position", position);
+        editor.apply();
+        ((MainActivity)context).startActivityForResult(intent, 7);
 
     }
 

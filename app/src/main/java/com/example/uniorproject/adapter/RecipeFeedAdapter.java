@@ -11,8 +11,10 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uniorproject.R;
+import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.noDb.NoDb;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -21,12 +23,14 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     private LayoutInflater layoutInflater;
     private List<Recipe> recipeList;
     private final OnRecipeClickListener listener;
+    private final List<Picture> pictureList;
 
-    public RecipeFeedAdapter(Context context, List<Recipe> recipeList, OnRecipeClickListener listener) {
+    public RecipeFeedAdapter(Context context, List<Recipe> recipeList, OnRecipeClickListener listener, List<Picture> pictureList) {
         this.context = context;
         this.layoutInflater = LayoutInflater.from(context);
         this.recipeList = recipeList;
         this.listener = listener;
+        this.pictureList = pictureList;
     }
 
     @NonNull
@@ -48,6 +52,16 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ((RecipeHolder)holder).timeText.setText(String.format("%d:%d", hours, minutes));
         ((RecipeHolder)holder).kcalText.setText(String.valueOf(recipe.getKcal()));
         ((RecipeHolder)holder).likesText.setText(String.valueOf(recipe.getLikes()));
+        try {
+            String link = pictureList.get(position).getLink();
+            if(!link.isEmpty()) {
+                Picasso.with(context).load(link).into(((RecipeHolder) holder).imageView);
+            }
+            else {
+
+            }
+        }
+        catch (IndexOutOfBoundsException e){}
 
         ((RecipeHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
             @Override
