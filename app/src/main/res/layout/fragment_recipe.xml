@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     tools:context=".fragment.RecipeFragment">
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -128,16 +128,55 @@
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="16dp"/>
 
-        <RatingBar
-            android:id="@+id/recipe_complexity"
+        <ImageView
+            android:id="@+id/recipe_complexity_image1"
             style="@style/ComplexityBar"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:numStars="5"
-            android:isIndicator="true"
-            android:rating="4"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/recipe_complexity_image2"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_carbohydrates"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <ImageView
+            android:id="@+id/recipe_complexity_image2"
+            style="@style/ComplexityBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintEnd_toStartOf="@id/recipe_complexity_image3"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_carbohydrates"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <ImageView
+            android:id="@+id/recipe_complexity_image3"
+            style="@style/ComplexityBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_carbohydrates"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <ImageView
+            android:id="@+id/recipe_complexity_image4"
+            style="@style/ComplexityBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/recipe_complexity_image3"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_carbohydrates"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+        <ImageView
+            android:id="@+id/recipe_complexity_image5"
+            style="@style/ComplexityBar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toEndOf="@id/recipe_complexity_image4"
             app:layout_constraintTop_toBottomOf="@+id/recipe_carbohydrates"
             android:layout_marginVertical="16dp"
             android:layout_marginHorizontal="8dp"/>
@@ -152,14 +191,14 @@
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/recipe_complexity"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_complexity_image3"
             android:layout_marginVertical="16dp"
             android:layout_marginHorizontal="8dp"/>
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recipe_ingredients"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="16dp"
             app:layout_constraintEnd_toEndOf="parent"
@@ -174,6 +213,7 @@
             android:fontFamily="@font/montserratalternates_semibold"
             android:gravity="center"
             android:text="Добавить в список покупок"
+            android:textColor="@color/dark_grey"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recipe_ingredients"
@@ -183,20 +223,20 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recipe_guide"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/copy_ingredients_button" />
 
-        <com.google.android.material.textview.MaterialTextView
+        <CheckBox
             android:id="@+id/recipe_likes"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:textSize="16sp"
             android:text="likes"
-            android:drawableLeft="@drawable/ic_baseline_thumb_up_24"
+            android:button="@drawable/likes_selector"
             android:fontFamily="@font/montserratalternates_medium"
             app:layout_constraintTop_toBottomOf="@id/recipe_guide"
             app:layout_constraintStart_toStartOf="parent"
@@ -206,12 +246,70 @@
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/recipe_tags"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="0dp"
             android:layout_marginHorizontal="8dp"
             android:layout_marginVertical="16dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/recipe_recommendations" />
+
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_to_meals_button"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_orange"
+            android:fontFamily="@font/montserratalternates_semibold"
+            android:gravity="center"
+            android:text="Добавить в список съеденного"
+            android:textColor="@color/dark_grey"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/recipe_likes"
+            android:layout_marginHorizontal="8dp"
+            android:layout_marginTop="16dp"
+            android:layout_marginBottom="48dp"/>
+
+
+        <EditText
+            android:id="@+id/comment_edit_text"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:hint="Оставьте комментарий"
+            app:layout_constraintEnd_toStartOf="@id/add_comment"
+            app:layout_constraintHorizontal_weight="4"
+            android:layout_marginVertical="16dp"
+            android:layout_marginStart="8dp"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/add_to_meals_button" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/add_comment"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_orange"
+            app:icon="@drawable/ic_baseline_send_24"
+            app:iconGravity="textEnd"
+            app:iconPadding="0dp"
+            app:iconTint="@color/dark_grey"
+            android:layout_marginVertical="16dp"
+            android:layout_marginEnd="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@id/comment_edit_text"
+            app:layout_constraintTop_toBottomOf="@id/add_to_meals_button" />
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/recipe_comments"
+            app:layout_constraintTop_toBottomOf="@id/add_comment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:layout_marginHorizontal="8dp"/>
+
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

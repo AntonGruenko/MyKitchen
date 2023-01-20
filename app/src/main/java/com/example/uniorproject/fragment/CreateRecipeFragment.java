@@ -106,7 +106,7 @@ public class CreateRecipeFragment extends Fragment {
         if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
             recipeImage = getActivity().findViewById(R.id.recipe_image);
-            Picasso.with(getContext()).load(imageUri).into(recipeImage);
+            Picasso.with(getContext()).load(imageUri).fit().into(recipeImage);
             recipeImage.setImageURI(imageUri);
             uploadPicture();
 

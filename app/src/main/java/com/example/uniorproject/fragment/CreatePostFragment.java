@@ -27,13 +27,16 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.android.volley.VolleyError;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentCreatePostBinding;
 import com.example.uniorproject.domain.Post;
+import com.example.uniorproject.domain.mapper.UserMapper;
 import com.example.uniorproject.firebase.Uploader;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
+import com.example.uniorproject.rest.VolleyCallback;
 import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.database.DatabaseReference;
@@ -44,13 +47,15 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
 public class CreatePostFragment extends Fragment {
 
     private static final int IMAGE_REQUEST = 1;
     private ImageView postImage;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads");
     private Uri imageUri;
-    private Post post = new Post();
+    private Post post;
     private SharedPreferences sharedPreferences;
 
     @Override
@@ -65,14 +70,24 @@ public class CreatePostFragment extends Fragment {
         View view = binding.getRoot();
 
         sharedPreferences = getActivity().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        post = new Post();
+        post.setPicture("");
         binding.postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new VolleyAPI(getActivity()).fillUser();
-                post.setAuthor(NoDb.USER_LIST.get(sharedPreferences.getInt("userId", 1)));
-                post.setText(binding.editText.getText().toString());
-                post.setLikes(0);
-                new VolleyAPI(getActivity()).addPost(post);
+                new VolleyAPI(getActivity()).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        post.setAuthor(UserMapper.userFromJson(response));
+                        post.setText(binding.editText.getText().toString());
+                        new VolleyAPI(getActivity()).addPost(post);
+                    }
+
+                    @Override
+                    public void onError(@Nullable VolleyError error) {
+
+                    }
+                });
             }
         });
 

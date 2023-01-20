@@ -58,7 +58,10 @@ public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.Re
 
         if(contentType == 2) {
             try {
-                Picasso.with(context).load(NoDb.PICTURE_LIST.get(1).getLink()).into(((RecipeDataHolder) holder).elementImage);
+                try {
+                    Picasso.with(context).load(NoDb.PICTURE_LIST.get(position + 1).getLink()).into(((RecipeDataHolder) holder).elementImage);
+                }
+                catch (IllegalArgumentException e){}
             }
             catch (IndexOutOfBoundsException e){}
         }

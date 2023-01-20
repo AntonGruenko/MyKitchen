@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".fragment.SearchFragment">
+
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/search_container"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Введите запрос"
+            app:layout_constraintEnd_toStartOf="@id/search_button"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintHorizontal_weight="7"
+            android:layout_marginTop="24dp"
+            android:layout_marginHorizontal="8dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/search_edit_text"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:gravity="start"
+                android:fontFamily="@font/montserratalternates_semibold"
+                android:background="@color/light_grey"
+                android:textColorHint="@color/black"
+                android:textCursorDrawable="@null"
+                app:boxStrokeColor="@color/black" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_button"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginVertical="16dp"
+            android:layout_marginEnd="8dp"
+            android:backgroundTint="@color/light_orange"
+            app:icon="@drawable/ic_baseline_search_24"
+            app:iconGravity="textEnd"
+            app:iconPadding="0dp"
+            app:iconTint="@color/dark_grey"
+            app:layout_constraintBottom_toBottomOf="@+id/search_container"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toEndOf="@id/search_container"
+            app:layout_constraintTop_toTopOf="@+id/search_container" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_recipes"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_orange"
+            app:cornerRadius="32dp"
+            android:text="Рецепты"
+            android:padding="8dp"
+            android:textColor="@color/dark_grey"
+            android:fontFamily="@font/montserratalternates_regular"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toStartOf="@id/search_profiles"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_container" />
+
+        <com.google.android.material.switchmaterial.SwitchMaterial
+            android:id="@+id/search_switch"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/montserratalternates_medium"
+            android:text="Расширенный поиск"
+            android:textSize="18sp"
+            android:layout_marginVertical="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/search_recipes" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/search_profiles"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/light_orange"
+            app:cornerRadius="32dp"
+            android:text="Профили"
+            android:padding="8dp"
+            android:textColor="@color/dark_grey"
+            android:fontFamily="@font/montserratalternates_regular"
+            android:textAllCaps="false"
+            android:textSize="18sp"
+            android:layout_marginTop="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toEndOf="@+id/search_recipes"
+            app:layout_constraintTop_toBottomOf="@+id/search_container" />
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/recipe_search_container"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/search_switch">
+
+            <RatingBar
+                android:id="@+id/complexity"
+                style="@style/ComplexityBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginVertical="16dp"
+                android:numStars="5"
+                android:rating="0"
+                android:stepSize="1"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/kcal_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Калорийность"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/complexity" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/kcal_bottom_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="От"
+                app:layout_constraintEnd_toStartOf="@id/kcal_top_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/kcal_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/kcal_bottom_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/kcal_top_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="До"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/kcal_bottom_container"
+                app:layout_constraintTop_toBottomOf="@id/kcal_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/kcal_top_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/proteins_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Белки"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/kcal_bottom_container" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/proteins_bottom_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="От"
+                app:layout_constraintEnd_toStartOf="@id/proteins_top_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/proteins_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/proteins_bottom_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/proteins_top_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="До"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/proteins_bottom_container"
+                app:layout_constraintTop_toBottomOf="@id/proteins_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/proteins_top_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/fats_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Жиры"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/proteins_bottom_container" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fats_bottom_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="От"
+                app:layout_constraintEnd_toStartOf="@id/fats_top_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fats_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fats_bottom_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/fats_top_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="До"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/fats_bottom_container"
+                app:layout_constraintTop_toBottomOf="@id/fats_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/fats_top_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/carbohydrates_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Углеводы"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/fats_bottom_container" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/carbohydrates_bottom_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="От"
+                app:layout_constraintEnd_toStartOf="@id/carbohydrates_top_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/carbohydrates_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/carbohydrates_bottom_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/carbohydrates_top_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="От"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/carbohydrates_bottom_container"
+                app:layout_constraintTop_toBottomOf="@id/carbohydrates_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/carbohydrates_top_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/time_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Часы и минуты"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/carbohydrates_bottom_container" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/hours_bottom_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="Часы от"
+                app:layout_constraintEnd_toStartOf="@id/minutes_bottom_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/time_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/hours_bottom_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/minutes_bottom_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="Минуты от"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/hours_bottom_container"
+                app:layout_constraintTop_toBottomOf="@id/time_text">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/minutes_bottom_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/hours_top_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="До"
+                app:layout_constraintEnd_toStartOf="@id/minutes_top_container"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/hours_bottom_container">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/hours_top_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/minutes_top_container"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                android:hint="До"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toEndOf="@id/hours_top_container"
+                app:layout_constraintTop_toBottomOf="@id/minutes_bottom_container">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/minutes_top_edit_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:background="@color/light_grey"
+                    android:fontFamily="@font/montserratalternates_semibold"
+                    android:gravity="start"
+                    android:textColorHint="@color/black"
+                    android:textCursorDrawable="@null"
+                    app:boxStrokeColor="@color/black" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+
+            <TextView
+                android:id="@+id/ingredients_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Ингредиенты"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/minutes_top_container" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/ingredients_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ingredients_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_add_ingredient"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:backgroundTint="@color/light_orange"
+                android:elevation="20dp"
+                android:fontFamily="@font/montserratalternates_semibold"
+                android:gravity="center"
+                android:text="+"
+                android:textSize="26sp"
+                app:cornerRadius="32dp"
+                android:textColor="@color/dark_grey"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/ingredients_recycler_view"
+                />
+
+            <TextView
+                android:id="@+id/tags_text"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="16dp"
+                android:layout_marginTop="16dp"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:text="Теги"
+                android:textColor="@color/black"
+                android:textSize="18sp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/button_add_ingredient" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/tags_recycler_view"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginTop="16dp"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tags_text" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_add_tag"
+                android:layout_width="64dp"
+                android:layout_height="64dp"
+                android:backgroundTint="@color/light_orange"
+                android:elevation="20dp"
+                android:fontFamily="@font/montserratalternates_semibold"
+                android:gravity="center"
+                android:text="+"
+                android:textSize="26sp"
+                app:cornerRadius="32dp"
+                android:textColor="@color/dark_grey"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tags_recycler_view"
+                />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/results_recycler_view"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:layout_marginHorizontal="8dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/recipe_search_container" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</ScrollView>

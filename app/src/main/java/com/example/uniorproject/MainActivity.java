@@ -16,28 +16,42 @@ import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 
+import com.android.volley.VolleyError;
 import com.example.uniorproject.adapter.RecipeCreatorAdapter;
 import com.example.uniorproject.databinding.ActivityMainBinding;
+import com.example.uniorproject.domain.Day;
+import com.example.uniorproject.domain.User;
+import com.example.uniorproject.domain.mapper.UserMapper;
 import com.example.uniorproject.fragment.CreateFragment;
 import com.example.uniorproject.fragment.CreateRecipeGuideFragment;
 import com.example.uniorproject.fragment.FeedFragment;
 import com.example.uniorproject.fragment.PostFragment;
 import com.example.uniorproject.fragment.ProfileFragment;
 import com.example.uniorproject.fragment.RecipeFragment;
+import com.example.uniorproject.fragment.SearchFragment;
 import com.example.uniorproject.fragment.ShoppingListFragment;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
+import com.example.uniorproject.rest.VolleyCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
 import com.squareup.picasso.Picasso;
 
+import org.json.JSONObject;
+
+import java.util.Calendar;
+
+import io.realm.Realm;
+import io.realm.RealmConfiguration;
+
 public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private Uri imageUri;
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
+    private StorageReference userStorageReference = FirebaseStorage.getInstance().getReference("avatars");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,8 +65,30 @@ public class MainActivity extends AppCompatActivity {
 
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
+        new VolleyAPI(MainActivity.this).findUserByEmail(sp.getString("userEmail", ""), new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                User user = UserMapper.userFromJson(response);
+                changeDateIfNeeded(user);
+            }
+
+            @Override
+            public void onError(@Nullable VolleyError error) {
+
+            }
+        });
         new VolleyAPI(this).fillUser();
-        new VolleyAPI(this).fillRecipe();
+        new VolleyAPI(this).fillRecipe(new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+
+            }
+
+            @Override
+            public void onError(@Nullable VolleyError error) {
+
+            }
+        });
 
         changeFragment(new FeedFragment());
 
@@ -66,8 +102,8 @@ public class MainActivity extends AppCompatActivity {
                         case(R.id.nav_shopping_list):
                             fragment = new ShoppingListFragment();
                             break;
-                        case(R.id.nav_create):
-                            fragment = new CreateFragment();
+                        case(R.id.nav_search):
+                            fragment = new SearchFragment();
                             break;
                         case(R.id.nav_posts):
                             fragment = new PostFragment();
@@ -100,7 +136,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             getSupportFragmentManager()
                     .beginTransaction()
-                    .replace(R.id.fragment_container, fragment)
+                    .replace(R.id.fragment_container, fragment, "UserProfile")
                     .commit();
             return true;
         }
@@ -110,6 +146,20 @@ public class MainActivity extends AppCompatActivity {
         FeedFragment fragment =((FeedFragment)
                 getSupportFragmentManager().findFragmentByTag("RecipeFeed"));
         fragment.updateAdapter();
+    }
+
+    public void updateProfileRecipeAdapter(){
+        ProfileFragment fragment = ((ProfileFragment)
+                getSupportFragmentManager().findFragmentByTag("UserProfile"));
+        fragment.updateRecipeAdapter();
+
+    }
+
+    public void updateProfilePostAdapter(){
+        ProfileFragment fragment = ((ProfileFragment)
+                getSupportFragmentManager().findFragmentByTag("UserProfile"));
+        fragment.updatePostAdapter();
+
     }
 
     public void updateCurrentRecipeAdapter(){
@@ -130,11 +180,44 @@ public class MainActivity extends AppCompatActivity {
         if (requestCode == 7 && resultCode == RESULT_OK && data != null && data.getData() != null) {
 
             imageUri = data.getData();
+
             SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
             int position = sharedPreferences.getInt("position", 0);
             uploadPicture(position);
 
+        }
 
+        if(requestCode == 8 && resultCode == RESULT_OK && data != null && data.getData() != null){
+            imageUri = data.getData();
+            String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
+
+            SharedPreferences sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+            int userId = sharedPreferences.getInt("userId", 0);
+            String userName = sharedPreferences.getString("userName", "");
+            String userEmail = sharedPreferences.getString("userEmail", "");
+            String userPassword = sharedPreferences.getString("userPassword", "");
+            String userStatus = sharedPreferences.getString("userStatus", "");
+            int userKcal = sharedPreferences.getInt("userKcal", 0);
+            int userProteins = sharedPreferences.getInt("userProteins", 0);
+            int userFats = sharedPreferences.getInt("userFats", 0);
+            int userCarbohydrates = sharedPreferences.getInt("userCarbohydrates", 0);
+            long registrationDate = sharedPreferences.getLong("registrationDate", 0);
+
+            StorageReference fileReference = userStorageReference.child(fileName);
+            fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
+                @Override
+                public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
+                    fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
+                        @Override
+                        public void onSuccess(Uri uri) {
+                            new VolleyAPI(MainActivity.this).updateUser(userId, userName, userEmail, userPassword, userStatus, uri.toString(), userKcal, userProteins, userFats, userCarbohydrates, registrationDate);
+                            ProfileFragment fragment = ((ProfileFragment)
+                                    getSupportFragmentManager().findFragmentByTag("UserProfile"));
+                            fragment.updateProfilePicture(uri);
+                        }
+                    });
+                }
+            });
         }
     }
 
@@ -147,7 +230,6 @@ public class MainActivity extends AppCompatActivity {
     private void uploadPicture(int position){
         if(imageUri != null) {
             String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
-            RecipeCreatorAdapter adapter = new RecipeCreatorAdapter(MainActivity.this, NoDb.GUIDE_LIST, 2);
             StorageReference fileReference = storageReference.child(fileName);
             fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
                 @Override
@@ -159,7 +241,7 @@ public class MainActivity extends AppCompatActivity {
                             try {
                                 CreateRecipeGuideFragment fragment = ((CreateRecipeGuideFragment)
                                         getSupportFragmentManager().findFragmentByTag("setGuide"));
-                                fragment.updateAdapter();
+                                fragment.updateAdapter(position);
                             }
                             catch (NullPointerException e){
 
@@ -169,6 +251,58 @@ public class MainActivity extends AppCompatActivity {
                 }
             });
         }
+    }
+
+    private void changeDateIfNeeded(User user) {
+        SharedPreferences sp = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+        SharedPreferences.Editor e = sp.edit();
+        long date = sp.getLong("date", 0);
+        Calendar currentCalendar = Calendar.getInstance();
+        Calendar oldCalendar = Calendar.getInstance();
+        oldCalendar.setTimeInMillis(date);
+
+        currentCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        currentCalendar.set(Calendar.MINUTE, 0);
+        currentCalendar.set(Calendar.SECOND, 0);
+        currentCalendar.set(Calendar.MILLISECOND, 0);
+        oldCalendar.set(Calendar.HOUR_OF_DAY, 0);
+        oldCalendar.set(Calendar.MINUTE, 0);
+        oldCalendar.set(Calendar.SECOND, 0);
+        oldCalendar.set(Calendar.MILLISECOND, 0);
+
+        long period = currentCalendar.getTimeInMillis() - oldCalendar.getTimeInMillis();
+        long registrationPeriod = currentCalendar.getTimeInMillis() - user.getRegistrationDate();
+        period /= 86400000;
+        date = date + period * 86400000;
+        int daysFromRegistration = (int) registrationPeriod / 86400000;
+        e.putLong("date", date);
+        e.apply();
+
+        new VolleyAPI(MainActivity.this).findUserByEmail(sp.getString("userEmail", ""), new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                User user = UserMapper.userFromJson(response);
+                new VolleyAPI(MainActivity.this).findDaysByUserAndDay(user.getId(), daysFromRegistration, new VolleyCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+
+                    }
+
+                    @Override
+                    public void onError(VolleyError error) {
+                        new VolleyAPI(MainActivity.this).addDay(new Day(user, daysFromRegistration,0,0, 0, 0, false));
+                    }
+                });
+            }
+
+            @Override
+            public void onError(VolleyError error) {
+
+            }
+        });
+
+
+
     }
 
 

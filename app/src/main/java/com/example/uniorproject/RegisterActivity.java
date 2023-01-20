@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Patterns;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
@@ -37,7 +38,9 @@ public class RegisterActivity extends AppCompatActivity {
     private String emailString;
     private String nameString;
     private String passwordString;
+    private String secondPasswordString;
     private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
     private User newUser = new User();
     private StorageReference storageReference = FirebaseStorage.getInstance().getReference("avatars");
     private Uri imageUri;
@@ -57,41 +60,43 @@ public class RegisterActivity extends AppCompatActivity {
                 emailString = binding.emailEditText.getText().toString();
                 nameString = binding.nameEditText.getText().toString();
                 passwordString = binding.passwordEditText.getText().toString();
+                secondPasswordString = binding.secondPasswordEditText.getText().toString();
                 sharedPreferences = getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
-
+                editor = sharedPreferences.edit();
                 if(!Objects.equals(emailString, "") && !Objects.equals(nameString, "") && !passwordString.equals("")){
-                    new VolleyAPI(RegisterActivity.this).findUserByEmail(emailString, new VolleyCallback() {
-                        @Override
-                        public void onSuccess(JSONObject response) {
-                            User user = UserMapper.userFromJson(response);
-                            if(user.getEmail().equals(emailString)){
-                                Toast.makeText(RegisterActivity.this, "Такой пользователь уже существует!", Toast.LENGTH_SHORT).show();
+                    if(passwordString.length() < 8){
+                        Toast.makeText(RegisterActivity.this, "Пароль должен быть длиннее 8 символов!", Toast.LENGTH_SHORT).show();
+                    }
+                    else if(!passwordString.equals(secondPasswordString)){
+                        Toast.makeText(RegisterActivity.this, "Пароли не совпадают!", Toast.LENGTH_SHORT).show();
+                    }
+                    else if(!Patterns.EMAIL_ADDRESS.matcher(emailString).matches()){
+                        Toast.makeText(RegisterActivity.this, "Некорректный email!", Toast.LENGTH_SHORT).show();
+                    }
+                    else {
+                        new VolleyAPI(RegisterActivity.this).findUserByEmail(emailString, new VolleyCallback() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                User user = UserMapper.userFromJson(response);
+                                if (user.getEmail().equals(emailString)) {
+                                    Toast.makeText(RegisterActivity.this, "Такой пользователь уже существует!", Toast.LENGTH_SHORT).show();
+                                }
                             }
-                            else if(passwordString.length() < 8){
-                                Toast.makeText(RegisterActivity.this, "Пароль должен быть длиннее 8 символов!", Toast.LENGTH_SHORT).show();
+
+                            @Override
+                            public void onError(VolleyError error) {
+                                if (error.networkResponse.statusCode == 500) {
+
+                                    Intent intent = new Intent(RegisterActivity.this, UserStatsActivity.class);
+
+                                    intent.putExtra("emailString", emailString);
+                                    intent.putExtra("nameString", nameString);
+                                    intent.putExtra("passwordString", passwordString);
+                                    startActivity(intent);
+                                }
                             }
-                        }
-
-                        @Override
-                        public void onError(VolleyError error) {
-                            if(error.networkResponse.statusCode == 500){
-                                newUser.setEmail(emailString);
-                                newUser.setName(nameString);
-                                newUser.setPassword(passwordString);
-
-                                new VolleyAPI(RegisterActivity.this).addUser(newUser);
-
-                                SharedPreferences.Editor editor = sharedPreferences.edit();
-                                editor.clear().commit();
-                                editor.putBoolean("unlogined", false);
-                                editor.putInt("userId", newUser.getId());
-                                editor.apply();
-
-                                Intent intent = new Intent(RegisterActivity.this, MainActivity.class);
-                                startActivity(intent);
-                            }
-                        }
-                    });
+                        });
+                    }
                 }
             }
         });
@@ -100,6 +105,14 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 openFileChooser();
+            }
+        });
+
+        binding.buttonLogin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent loginIntent = new Intent(RegisterActivity.this, UserStatsActivity.class);
+                startActivity(loginIntent);
             }
         });
     }
@@ -140,7 +153,9 @@ public class RegisterActivity extends AppCompatActivity {
                     fileReference.getDownloadUrl().addOnSuccessListener(new OnSuccessListener<Uri>() {
                         @Override
                         public void onSuccess(Uri uri) {
-                            newUser.setProfilePic(imageUri.toString());
+                            sharedPreferences = getSharedPreferences("SharedPreferences", MODE_PRIVATE);
+                            editor = sharedPreferences.edit();
+                            editor.putString("userProfilePic", uri.toString()).apply();
                         }
                     });
                 }

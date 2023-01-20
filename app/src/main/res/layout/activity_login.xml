@@ -7,6 +7,20 @@
     android:layout_height="match_parent"
     tools:context=".LoginActivity">
 
+    <com.google.android.material.textview.MaterialTextView
+        android:id="@+id/load_image_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:fontFamily="@font/montserratalternates_medium"
+        android:gravity="center"
+        android:text="Добро пожаловать в MyKitchen!"
+        android:textSize="20sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_marginTop="20dp"/>
+
     <com.google.android.material.textfield.TextInputLayout
         android:id="@+id/email_container"
         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"

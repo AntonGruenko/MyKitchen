@@ -7,6 +7,7 @@
     android:layout_height="match_parent"
     tools:context=".MainActivity">
 
+
     <com.google.android.material.textview.MaterialTextView
         android:id="@+id/load_image_text"
         android:layout_width="match_parent"
@@ -97,7 +98,6 @@
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="8dp"
         android:layout_marginVertical="16dp"
-
         android:gravity="start"
         android:hint="Пароль"
         app:layout_constraintEnd_toEndOf="parent"
@@ -119,6 +119,34 @@
 
     </com.google.android.material.textfield.TextInputLayout>
 
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/second_password_container"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="16dp"
+        android:gravity="start"
+        android:hint="Пароль"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/password_container">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/second_password_edit_text"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/light_grey"
+            android:fontFamily="@font/montserratalternates_semibold"
+            android:gravity="start"
+            android:inputType="textPassword"
+            android:textColorHint="@color/black"
+            android:textCursorDrawable="@null"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="1dp" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
     <com.google.android.material.button.MaterialButton
         android:id="@+id/button_create"
         android:layout_width="wrap_content"
@@ -126,12 +154,28 @@
         android:backgroundTint="@color/light_orange"
         android:fontFamily="@font/montserratalternates_regular"
         android:gravity="center"
-        android:text="Создать аккаунт"
+        android:text="Далее"
         android:textAllCaps="false"
-        android:textColor="@color/white"
+        android:textColor="@color/dark_grey"
         app:cornerRadius="32dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/password_container" />
+        app:layout_constraintTop_toBottomOf="@+id/second_password_container" />
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/button_login"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/light_orange"
+        android:fontFamily="@font/montserratalternates_regular"
+        android:gravity="center"
+        android:text="Войти"
+        android:textAllCaps="false"
+        android:textColor="@color/dark_grey"
+        app:cornerRadius="32dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/button_create" />
 </androidx.constraintlayout.widget.ConstraintLayout>

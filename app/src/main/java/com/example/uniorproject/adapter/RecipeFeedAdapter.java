@@ -1,6 +1,7 @@
 package com.example.uniorproject.adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,13 +9,20 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.android.volley.VolleyError;
 import com.example.uniorproject.R;
 import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.noDb.NoDb;
+import com.example.uniorproject.rest.VolleyAPI;
+import com.example.uniorproject.rest.VolleyCallback;
 import com.squareup.picasso.Picasso;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.List;
 
@@ -43,7 +51,7 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Recipe recipe = NoDb.RECIPE_LIST.get(position);
+        Recipe recipe = recipeList.get(position);
         int minutes, hours;
         hours = recipe.getTime()/60;
         minutes = recipe.getTime() - hours * 60;
@@ -51,14 +59,33 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         ((RecipeHolder)holder).nameText.setText(recipe.getName());
         ((RecipeHolder)holder).timeText.setText(String.format("%d:%d", hours, minutes));
         ((RecipeHolder)holder).kcalText.setText(String.valueOf(recipe.getKcal()));
-        ((RecipeHolder)holder).likesText.setText(String.valueOf(recipe.getLikes()));
-        try {
-            String link = pictureList.get(position).getLink();
-            if(!link.isEmpty()) {
-                Picasso.with(context).load(link).into(((RecipeHolder) holder).imageView);
-            }
-            else {
 
+        new VolleyAPI(context).findRecipeLikesByRecipe(recipe.getId(), new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                try {
+                    String likes = response.getString("num");
+                    ((RecipeHolder) holder).likesText.setText(likes);
+                } catch (JSONException e) {
+                }
+            }
+
+            @Override
+            public void onError(@Nullable VolleyError error) {
+
+            }
+        });
+        try {
+            Log.d("sas", recipe.getId() + "------");
+            for(int i = 0; i < NoDb.PICTURE_LIST.size(); i++) {
+                String link = pictureList.get(position).getLink();
+                if(NoDb.PICTURE_LIST.get(i).getRecipe().getId() == recipe.getId()) {
+                    Log.d("sas", NoDb.PICTURE_LIST.get(i).getLink() + "");
+                    if (!link.isEmpty()) {
+                        Picasso.with(context).load(link).into(((RecipeHolder) holder).imageView);
+                    }
+                    break;
+                }
             }
         }
         catch (IndexOutOfBoundsException e){}

@@ -15,8 +15,7 @@ public class PostMapper {
                     jsonObject.getInt("id"),
                     UserMapper.userFromPostJson(jsonObject),
                     jsonObject.getString("text"),
-                    jsonObject.getString("picture"),
-                    jsonObject.getInt("likes"));
+                    jsonObject.getString("picture"));
         } catch (JSONException e) {
             e.printStackTrace();
         }

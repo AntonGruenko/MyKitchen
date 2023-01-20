@@ -6,7 +6,6 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
-import android.util.Log;
 import android.view.KeyEvent;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,7 +14,6 @@ import android.view.inputmethod.EditorInfo;
 import android.widget.TextView;
 
 import com.example.uniorproject.R;
-import com.example.uniorproject.adapter.RecipeCreatorAdapter;
 import com.example.uniorproject.adapter.RecipeTagsAdapter;
 import com.example.uniorproject.adapter.SelectedTagsAdapter;
 import com.example.uniorproject.databinding.FragmentSetRecipeTagsBinding;
@@ -75,7 +73,7 @@ public class SetRecipeTagsFragment extends Fragment {
             public void onClick(View view) {
                 getActivity().getSupportFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.create_container, new SetRecipeNutritionalValue(), "setNutrition")
+                        .replace(R.id.create_container, new SetRecipeNutritionalValueFragment(), "setNutrition")
                         .commit();
             }
         });

@@ -1,6 +1,7 @@
 package com.example.uniorproject.domain.mapper;
 
 import com.example.uniorproject.domain.Recipe;
+import com.example.uniorproject.domain.User;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -24,10 +25,61 @@ public class RecipeMapper {
                     jsonObject.getInt("fats"),
                     jsonObject.getInt("carbohydrates"),
                     jsonObject.getInt("sugar"),
-                    jsonObject.getInt("likes"),
                     jsonObject.getInt("complexity"),
                     jsonObject.getString("tags"));
         } catch (JSONException e) {
+            e.printStackTrace();
+        }
+
+        return recipe;
+    }
+
+    public static Recipe recipeFromMealJson(JSONObject jsonObject){
+        Recipe recipe = null;
+
+        try {
+            recipe = recipeFromJson(jsonObject.getJSONObject("recipe"));
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return recipe;
+    }
+
+    public static Recipe recipeFromPictureJson(JSONObject jsonObject){
+        Recipe recipe = null;
+
+        try {
+            recipe = recipeFromJson(jsonObject.getJSONObject("recipe"));
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return recipe;
+    }
+
+    public static Recipe recipeFromRecipeLikeJson(JSONObject jsonObject){
+        Recipe recipe = null;
+
+        try {
+            recipe = recipeFromJson(jsonObject.getJSONObject("recipeDto"));
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return recipe;
+    }
+
+    public static Recipe recipeFromRecipeCommentJson(JSONObject jsonObject){
+        Recipe recipe = null;
+
+        try {
+            recipe = recipeFromJson(jsonObject.getJSONObject("recipe"));
+        }
+        catch (JSONException e){
             e.printStackTrace();
         }
 

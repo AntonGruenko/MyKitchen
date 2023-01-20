@@ -1,8 +1,26 @@
 package com.example.uniorproject.database;
 
-public class Product {
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
+import io.realm.RealmObject;
+
+@Entity
+public class Product{
+
+    @PrimaryKey(autoGenerate = true)
     private long id;
+
+    @ColumnInfo(name = "title")
     private String title;
+
+    public Product() {
+    }
+
+    public Product(String title) {
+        this.title = title;
+    }
 
     public Product(long id, String title) {
         this.id = id;

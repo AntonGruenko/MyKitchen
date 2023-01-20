@@ -59,9 +59,6 @@ public class CreateRecipeGuideFragment extends Fragment {
                             .beginTransaction()
                             .replace(R.id.create_container, new SetRecipeTagsFragment(), "setTags")
                             .commit();
-                    for (int i = 0; i < NoDb.PICTURE_LINK_LIST.size(); i++) {
-                        Log.d("Sas", NoDb.PICTURE_LINK_LIST.get(i));
-                    }
                 }
                 else{
                     Toast.makeText(getContext(), "Введите шаги!", Toast.LENGTH_LONG).show();
@@ -81,8 +78,8 @@ public class CreateRecipeGuideFragment extends Fragment {
         return view;
     }
 
-    public void updateAdapter(){
-        recipeCreatorAdapter.notifyDataSetChanged();
+    public void updateAdapter(int position){
+        recipeCreatorAdapter.notifyItemChanged(position);
     }
 
 }

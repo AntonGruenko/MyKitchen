@@ -4,50 +4,65 @@
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <com.google.android.material.button.MaterialButton
-        android:id="@+id/delete_button"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:backgroundTint="@color/light_grey"
-        app:icon="@drawable/ic_baseline_cancel_24"
-        app:iconTint="@color/light_orange"
-        app:layout_constraintBottom_toBottomOf="@+id/filledTextField_Title"
-        app:layout_constraintEnd_toStartOf="@id/filledTextField_Title"
-        app:layout_constraintHorizontal_weight="1"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="@+id/filledTextField_Title" />
-
-    <com.google.android.material.textfield.TextInputLayout
-        android:id="@+id/filledTextField_Title"
-        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-        android:layout_width="0dp"
-        android:layout_height="64dp"
-        android:textColorHint="@color/black"
-        app:boxStrokeColor="@color/black"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/delete_button"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintHorizontal_weight="7">
-
-        <com.google.android.material.textfield.TextInputEditText
-            android:id="@+id/edit_content"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:background="@color/light_grey"
-            android:fontFamily="@font/montserratalternates_regular"
-            android:gravity="start"
-            android:textCursorDrawable="@null" />
-    </com.google.android.material.textfield.TextInputLayout>
-
-    <ImageView
-        android:id="@+id/content_image"
-        android:layout_width="wrap_content"
+    <androidx.cardview.widget.CardView
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/delete_button"
         app:layout_constraintStart_toStartOf="parent"
-        android:background="@drawable/ic_baseline_camera_alt_24"
-        android:backgroundTint="@color/black"
-        android:layout_marginVertical="16dp"
-        android:layout_marginHorizontal="8dp" />
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:cardCornerRadius="05dp"
+        android:layout_marginStart="10dp"
+        android:layout_marginEnd="10dp"
+        android:layout_marginTop="05dp"
+        android:layout_marginBottom="05dp">
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/delete_button"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/white"
+                app:icon="@drawable/ic_baseline_cancel_24"
+                app:iconTint="@color/light_orange"
+                app:iconPadding="0dp"
+                app:iconGravity="textStart"
+                android:layout_marginLeft="10dp"
+                app:layout_constraintBottom_toTopOf="@id/content_image"
+                app:layout_constraintEnd_toStartOf="@id/content"
+                app:layout_constraintHorizontal_weight="1"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/content"
+                style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/montserratalternates_regular"
+                android:gravity="center_vertical"
+                android:textSize="22sp"
+                android:layout_marginHorizontal="10dp"
+                app:layout_constraintBottom_toTopOf="@+id/content_image"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_weight="7"
+                app:layout_constraintStart_toEndOf="@+id/delete_button"
+                app:layout_constraintTop_toTopOf="parent"/>
+
+            <ImageView
+                android:id="@+id/content_image"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginHorizontal="8dp"
+                android:layout_marginVertical="16dp"
+                android:background="@drawable/ic_baseline_camera_alt_24"
+                android:backgroundTint="@color/black"
+                app:layout_constraintEnd_toEndOf="parent"
+
+                app:layout_constraintTop_toBottomOf="@id/delete_button" />
+        </androidx.constraintlayout.widget.ConstraintLayout>
+    </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

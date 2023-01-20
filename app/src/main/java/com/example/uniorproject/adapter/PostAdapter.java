@@ -41,22 +41,24 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
     public void onBindViewHolder(@NonNull PostHolder holder, int position) {
         Post post = NoDb.POST_LIST.get(position);
         ((PostHolder) holder).authorName.setText(post.getAuthor().getName());
-        ((PostHolder) holder).likesText.setText(String.valueOf(post.getLikes()));
+        ((PostHolder) holder).likesText.setText(String.valueOf(0));
         ((PostHolder) holder).contentText.setText(String.valueOf(post.getText()));
-        Picasso.with(context)
-                .load(post.getPicture())
-                .into(((PostHolder) holder).itemImage, new Callback(){
+        if(!post.getPicture().isEmpty()) {
+            Picasso.with(context)
+                    .load(post.getPicture())
+                    .into(((PostHolder) holder).itemImage, new Callback() {
 
-                    @Override
-                    public void onSuccess() {
+                        @Override
+                        public void onSuccess() {
 
-                    }
+                        }
 
-                    @Override
-                    public void onError() {
-                        ((PostHolder) holder).itemImage.setVisibility(View.GONE);
-                    }
-                });
+                        @Override
+                        public void onError() {
+                            ((PostHolder) holder).itemImage.setVisibility(View.GONE);
+                        }
+                    });
+        }
 
     }
     @Override

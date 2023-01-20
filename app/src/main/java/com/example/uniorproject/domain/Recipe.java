@@ -1,5 +1,7 @@
 package com.example.uniorproject.domain;
 
+import java.util.Objects;
+
 public class Recipe {
     private int id;
     private String name;
@@ -13,7 +15,6 @@ public class Recipe {
     private int fats;
     private int carbohydrates;
     private int sugar;
-    private int likes;
     private int complexity;
     private String tags;
 
@@ -30,7 +31,6 @@ public class Recipe {
             int fats,
             int carbohydrates,
             int sugar,
-            int likes,
             int complexity,
             String tags) {
         this.id = id;
@@ -45,7 +45,6 @@ public class Recipe {
         this.fats = fats;
         this.carbohydrates = carbohydrates;
         this.sugar = sugar;
-        this.likes = likes;
         this.complexity = complexity;
         this.tags = tags;
     }
@@ -62,7 +61,6 @@ public class Recipe {
             int fats,
             int carbohydrates,
             int sugar,
-            int likes,
             int complexity,
             String tags) {
         this.name = name;
@@ -76,7 +74,6 @@ public class Recipe {
         this.fats = fats;
         this.carbohydrates = carbohydrates;
         this.sugar = sugar;
-        this.likes = likes;
         this.complexity = complexity;
         this.tags = tags;
     }
@@ -129,15 +126,24 @@ public class Recipe {
         return sugar;
     }
 
-    public int getLikes() {
-        return likes;
-    }
-
     public int getComplexity() {
         return complexity;
     }
 
     public String getTags() {
         return tags;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Recipe recipe = (Recipe) o;
+        return id == recipe.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
     }
 }

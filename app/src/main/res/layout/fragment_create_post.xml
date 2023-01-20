@@ -53,9 +53,11 @@
             app:layout_constraintTop_toBottomOf="@+id/filledTextField_Title"
             android:backgroundTint="@color/light_orange"
             android:text="Опубликовать"
+            android:textColor="@color/dark_grey"
             android:textSize="18sp"
             android:fontFamily="@font/montserratalternates_bold"
             app:icon="@drawable/ic_baseline_download_done_24"
+            app:iconTint="@color/dark_grey"
             android:layout_margin="16dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

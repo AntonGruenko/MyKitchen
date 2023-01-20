@@ -12,8 +12,8 @@
 
         <ImageView
             android:id="@+id/recipe_image"
-            android:layout_width="256dp"
-            android:layout_height="256dp"
+            android:layout_width="192dp"
+            android:layout_height="192dp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
@@ -146,6 +146,7 @@
             android:elevation="20dp"
             app:cornerRadius="32dp"
             app:icon="@drawable/ic_baseline_navigate_next_24"
+            app:iconTint="@color/dark_grey"
             app:iconGravity="textEnd"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/complexity" />

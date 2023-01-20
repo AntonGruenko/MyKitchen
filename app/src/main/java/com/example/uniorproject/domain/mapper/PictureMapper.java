@@ -13,7 +13,7 @@ public class PictureMapper {
             picture = new Picture(
                     jsonObject.getInt("id"),
                     jsonObject.getString("link"),
-                    RecipeMapper.recipeFromJson(jsonObject),
+                    RecipeMapper.recipeFromPictureJson(jsonObject),
                     jsonObject.getInt("number")
             );
         } catch (JSONException e) {

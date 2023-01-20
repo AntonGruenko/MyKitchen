@@ -1,6 +1,7 @@
 package com.example.uniorproject.adapter;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.Log;
@@ -8,6 +9,9 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -20,77 +24,75 @@ import com.google.android.material.textfield.TextInputEditText;
 
 import java.util.List;
 
+import io.realm.Realm;
+import io.realm.RealmResults;
+
 public class ShoppingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
     private Context context;
-    private LayoutInflater layoutInflater;
+    private List<Product> products;
+    private ShoppingListHandler handler;
 
-    public ShoppingListAdapter(Context context) {
+    public ShoppingListAdapter(Context context, ShoppingListHandler handler) {
         this.context = context;
-        this.layoutInflater = LayoutInflater.from(context);
+        this.handler = handler;
+
+
+    }
+
+    public void setProductsList(List<Product> products){
+        this.products = products;
+        notifyDataSetChanged();
     }
 
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.create_recipe_item, parent, false);
+        View view = LayoutInflater.from(context).inflate(R.layout.create_recipe_item, parent, false);
         return new ShoppingListAdapter.ShoppingListHolder(view).linkAdapter(this);
     }
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        String content = NoDb.PRODUCT_LIST.get(position).getTitle();
-        int pos = position;
-        ((ShoppingListHolder)holder).editContent.setText(content);
-            ((ShoppingListHolder) holder).editContent.setHint("Продукт");
+        int pos = holder.getAdapterPosition();
 
-        ((ShoppingListHolder)holder).editContent.addTextChangedListener(new TextWatcher() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
-            @Override
-            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                try {
-                    NoDb.PRODUCT_LIST.set(pos, new Product(pos, charSequence.toString()));
-                }
-                catch (IndexOutOfBoundsException exception){
-                    Log.d("Exception", exception.toString());
-                }
-            }
-
-            @Override
-            public void afterTextChanged(Editable editable) {
-
+            public void onClick(View view) {
+                handler.editItem(products.get(pos));
             }
         });
 
+        ((ShoppingListHolder) holder).content.setText(products.get(pos).getTitle());
         ((ShoppingListHolder) holder).deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(NoDb.PRODUCT_LIST.size() > 1 && holder.getAdapterPosition() != RecyclerView.NO_POSITION) {
-                    NoDb.PRODUCT_LIST.remove(holder.getAdapterPosition());
-                    ShoppingListAdapter.this.notifyItemRemoved(holder.getAdapterPosition());
-                }
+                handler.deleteItem(products.get(pos));
             }
         });
     }
 
     @Override
     public int getItemCount() {
-        return NoDb.PRODUCT_LIST.size();
+        if(products == null){
+            return 0;
+        }
+        else {
+            return products.size();
+        }
     }
 
     private class ShoppingListHolder extends RecyclerView.ViewHolder {
         private Button deleteButton;
-        private TextInputEditText editContent;
+        private TextView content;
+        private ImageView cameraImage;
         private ShoppingListAdapter shoppingListAdapter;
 
         public ShoppingListHolder(@NonNull View itemView) {
             super(itemView);
-
             deleteButton = itemView.findViewById(R.id.delete_button);
-            editContent = itemView.findViewById(R.id.edit_content);
+            content = itemView.findViewById(R.id.content);
+            cameraImage = itemView.findViewById(R.id.content_image);
+            cameraImage.setVisibility(View.GONE);
 
         }
 
@@ -100,4 +102,11 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
         }
 
     }
+
+    public interface ShoppingListHandler{
+        void deleteItem(Product product);
+        void editItem(Product product);
+        void itemClick();
+    }
+
 }

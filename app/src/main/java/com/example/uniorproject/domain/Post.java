@@ -5,21 +5,18 @@ public class Post {
     private User author;
     private String text;
     private String picture;
-    private int likes;
 
-    public Post(int id, User author, String text, String picture, int likes) {
+    public Post(int id, User author, String text, String picture) {
         this.id = id;
         this.author = author;
         this.text = text;
         this.picture = picture;
-        this.likes = likes;
     }
 
-    public Post(User author, String text, String picture, int likes) {
+    public Post(User author, String text, String picture) {
         this.author = author;
         this.text = text;
         this.picture = picture;
-        this.likes = likes;
     }
 
     public Post() {
@@ -41,10 +38,6 @@ public class Post {
         this.picture = picture;
     }
 
-    public void setLikes(int likes) {
-        this.likes = likes;
-    }
-
     public int getId() {
         return id;
     }
@@ -59,9 +52,5 @@ public class Post {
 
     public String getPicture() {
         return picture;
-    }
-
-    public int getLikes() {
-        return likes;
     }
 }

@@ -3,26 +3,30 @@
     <item
         android:id="@+id/nav_feed"
         android:icon="@drawable/ic_baseline_recipe_24"
-        android:title="Рецепты"/>
+        android:title="Рецепты"
+        android:iconTint="@color/dark_grey"/>
 
     <item
         android:id="@+id/nav_shopping_list"
         android:icon="@drawable/ic_baseline_checklist_rtl_24"
-        android:title="Список покупок"/>
+        android:title="Список покупок"
+        android:iconTint="@color/dark_grey"/>
 
     <item
-        android:id="@+id/nav_create"
-        android:icon="@drawable/ic_baseline_plus_24"
-        android:title="Поделиться"/>
+        android:id="@+id/nav_search"
+        android:icon="@drawable/ic_baseline_search_24"
+        android:title="Поиск"
+        android:iconTint="@color/dark_grey"/>
 
     <item
         android:id="@+id/nav_posts"
         android:icon="@drawable/ic_baseline_newspaper_24"
-        android:title="Блоги"/>
+        android:title="Блоги"
+        android:iconTint="@color/dark_grey"/>
 
     <item
         android:id="@+id/nav_profile"
         android:icon="@drawable/ic_baseline_person_24"
-        android:title="Мой профиль"/>
+        android:title="Мой профиль" />
 
 </menu>

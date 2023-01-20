@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
@@ -49,7 +50,7 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
     @NonNull
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = layoutInflater.inflate(R.layout.create_recipe_item, parent, false);
+        View view = layoutInflater.inflate(R.layout.ingredients_and_guides_item, parent, false);
 
         return new RecipeCreatorAdapter.RecipeCreatorHolder(view).linkAdapter(this);
     }
@@ -121,9 +122,8 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
     public class RecipeCreatorHolder extends RecyclerView.ViewHolder {
         private Button deleteButton;
         private ImageView contentImage;
-        private TextInputEditText editContent;
+        private TextView editContent;
         private RecipeCreatorAdapter recipeCreatorAdapter;
-
         public RecipeCreatorHolder(@NonNull View itemView) {
             super(itemView);
 

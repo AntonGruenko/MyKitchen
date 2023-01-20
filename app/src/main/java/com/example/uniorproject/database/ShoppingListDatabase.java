@@ -7,10 +7,54 @@ import android.database.DatabaseUtils;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 
-import java.util.ArrayList;
+import androidx.room.Database;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
 
-public class ShoppingListDatabase {
-    private static String DATABASE_NAME = "database.db";
+import java.util.ArrayList;
+@Database(entities = {Product.class}, version = 1)
+public abstract class ShoppingListDatabase extends RoomDatabase {
+    public abstract ProductDao productDao();
+
+    private static ShoppingListDatabase INSTANCE;
+
+    public static ShoppingListDatabase getInstance(Context context){
+
+        if(INSTANCE == null){
+            INSTANCE = Room.databaseBuilder(context.getApplicationContext(), ShoppingListDatabase.class, "shoppingList").
+                    allowMainThreadQueries().
+                    build();
+        }
+
+        return INSTANCE;
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    /* static String DATABASE_NAME = "database.db";
     private static int DATABASE_VERSION = 1;
     private static String TABLE_NAME = "shopping_list";
 
@@ -28,9 +72,8 @@ public class ShoppingListDatabase {
         database = helper.getWritableDatabase();
     }
 
-    public long insert(long id, String product) {
+    public long insert(String product) {
         ContentValues cv = new ContentValues();
-        cv.put(COLUMN_ID, id);
         cv.put(COLUMN_PRODUCT, product);
         return database.insert(TABLE_NAME, null, cv);
     }
@@ -89,7 +132,7 @@ public class ShoppingListDatabase {
         @Override
         public void onCreate(SQLiteDatabase sqLiteDatabase) {
             String query = "CREATE TABLE " + TABLE_NAME + " (" +
-                    COLUMN_ID + " INT," +
+                    "id INTEGER primary key AUTOINCREMENT," +
                     COLUMN_PRODUCT + " INT);";
             sqLiteDatabase.execSQL(query);
         }
@@ -99,5 +142,5 @@ public class ShoppingListDatabase {
             sqLiteDatabase.execSQL("DROP TABLE IF EXISTS " + TABLE_NAME);
             onCreate(sqLiteDatabase);
         }
-    }
+    }*/
 }
