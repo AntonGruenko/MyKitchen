@@ -1879,7 +1879,18 @@ public class VolleyAPI implements AppAPI{
                     @Override
                     public void onResponse(String response) {
                         fillDays();
-                        callback.onSuccess(response);
+                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                        findDayById(Integer.parseInt(jsonObject.get("id").getAsString()), new VolleyCallback() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                callback.onSuccess(response);
+                            }
+
+                            @Override
+                            public void onError(@Nullable VolleyError error) {
+
+                            }
+                        });
                     }
                 },
                 errorListener) {
