@@ -420,13 +420,25 @@ public class RecipeFragment extends Fragment {
                             public void onError(VolleyError error){
                                 binding.addToMealsButton.setClickable(true);
                                 new VolleyAPI(context).addDay(new Day(
-                                            user,
-                                            daysFromRegistration,
-                                            recipe.getKcal(),
-                                            recipe.getProteins(),
-                                            recipe.getFats(),
-                                            recipe.getCarbohydrates(),
-                                            false));
+                                        user,
+                                        daysFromRegistration,
+                                        recipe.getKcal(),
+                                        recipe.getProteins(),
+                                        recipe.getFats(),
+                                        recipe.getCarbohydrates(),
+                                        false), new VolleyCallback() {
+                                    @Override
+                                    public void onSuccess(JSONObject response) {
+                                        Day day = DayMapper.dayFromJson(response);
+                                        Meal meal = new Meal(currentUser, recipe, day);
+                                        new VolleyAPI(context).addMeal(meal);
+                                    }
+
+                                    @Override
+                                    public void onError(@Nullable VolleyError error) {
+
+                                    }
+                                });
                             }
                         });
                     }

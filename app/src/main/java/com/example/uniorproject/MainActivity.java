@@ -279,7 +279,17 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(VolleyError error) {
-                        new VolleyAPI(MainActivity.this).addDay(new Day(user, daysFromRegistration,0,0, 0, 0, false));
+                        new VolleyAPI(MainActivity.this).addDay(new Day(user, daysFromRegistration, 0, 0, 0, 0, false), new VolleyCallback() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+
+                            }
+
+                            @Override
+                            public void onError(@Nullable VolleyError error) {
+
+                            }
+                        });
                     }
                 });
             }

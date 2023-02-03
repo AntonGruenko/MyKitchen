@@ -1866,7 +1866,7 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
-    public void addDay(Day day) {
+    public void addDay(Day day, VolleyCallback callback) {
         String url = BASE_URL + "/days";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -1879,6 +1879,7 @@ public class VolleyAPI implements AppAPI{
                     @Override
                     public void onResponse(String response) {
                         fillDays();
+                        callback.onSuccess(response);
                     }
                 },
                 errorListener) {

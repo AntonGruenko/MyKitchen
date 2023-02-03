@@ -114,7 +114,7 @@ public interface AppAPI {
 
     void deleteMeal(Meal meal, VolleyCallback callback);
 
-    void addDay(Day day);
+    void addDay(Day day, VolleyCallback callback);
 
     void updateDay(int id,
                    int userId,
