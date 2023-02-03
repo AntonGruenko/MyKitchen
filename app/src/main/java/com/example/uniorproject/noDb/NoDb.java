@@ -1,9 +1,12 @@
 package com.example.uniorproject.noDb;
 
+import android.util.Pair;
+
 import com.example.uniorproject.adapter.RecipeSearchAdapter;
 import com.example.uniorproject.database.Product;
 import com.example.uniorproject.domain.Day;
 import com.example.uniorproject.domain.Meal;
+import com.example.uniorproject.domain.Message;
 import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Post;
 import com.example.uniorproject.domain.Recipe;
@@ -47,5 +50,9 @@ public class NoDb {
     public static final List<Recipe> RECIPE_BY_INGREDIENTS_NOT_LIST = new ArrayList<>();
     public static final List<Recipe> RECIPE_BY_TAGS_LIST = new ArrayList<>();
     public static final List<Recipe> RECIPE_BY_TAGS_NOT_LIST = new ArrayList<>();
+    public static final List<Message> MESSAGES_FEED_LIST = new ArrayList<>();
+    public static final List<Message> MESSAGE_LIST = new ArrayList<>();
+    public static final List<Day> DAYS_BY_USER_LIST = new ArrayList<>();
+    public static final List<Pair<Integer, Float>> INGREDIENTS_DATABASE_LIST = new ArrayList<>();
 
 }

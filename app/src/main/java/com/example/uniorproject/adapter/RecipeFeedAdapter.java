@@ -27,9 +27,9 @@ import org.json.JSONObject;
 import java.util.List;
 
 public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
-    private LayoutInflater layoutInflater;
-    private List<Recipe> recipeList;
+    private final Context context;
+    private final LayoutInflater layoutInflater;
+    private final List<Recipe> recipeList;
     private final OnRecipeClickListener listener;
     private final List<Picture> pictureList;
 
@@ -57,7 +57,12 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         minutes = recipe.getTime() - hours * 60;
         ((RecipeHolder)holder).authorNameText.setText(recipe.getAuthor().getName());
         ((RecipeHolder)holder).nameText.setText(recipe.getName());
-        ((RecipeHolder)holder).timeText.setText(String.format("%d:%d", hours, minutes));
+        if(minutes >= 10) {
+            ((RecipeHolder) holder).timeText.setText(String.format("%d:%d", hours, minutes));
+        }
+        else {
+            ((RecipeHolder) holder).timeText.setText(String.format("%d:0%d", hours, minutes));
+        }
         ((RecipeHolder)holder).kcalText.setText(String.valueOf(recipe.getKcal()));
 
         new VolleyAPI(context).findRecipeLikesByRecipe(recipe.getId(), new VolleyCallback() {
@@ -76,13 +81,11 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
             }
         });
         try {
-            Log.d("sas", recipe.getId() + "------");
             for(int i = 0; i < NoDb.PICTURE_LIST.size(); i++) {
                 String link = pictureList.get(position).getLink();
                 if(NoDb.PICTURE_LIST.get(i).getRecipe().getId() == recipe.getId()) {
-                    Log.d("sas", NoDb.PICTURE_LIST.get(i).getLink() + "");
-                    if (!link.isEmpty()) {
-                        Picasso.with(context).load(link).into(((RecipeHolder) holder).imageView);
+                    if (!NoDb.PICTURE_LIST.get(i).getLink().isEmpty()) {
+                        Picasso.with(context).load(NoDb.PICTURE_LIST.get(i).getLink()).resize(512, 512).into(((RecipeHolder) holder).imageView);
                     }
                     break;
                 }
@@ -90,7 +93,7 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         }
         catch (IndexOutOfBoundsException e){}
 
-        ((RecipeHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 listener.onClick(recipe, holder.getAdapterPosition());
@@ -102,13 +105,13 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
     public int getItemCount() { return NoDb.RECIPE_LIST.size(); }
 
     private class RecipeHolder extends RecyclerView.ViewHolder {
-        private ImageView imageView;
-        private TextView
-                authorNameText,
-                nameText,
-                timeText,
-                kcalText,
-                likesText;
+        private final ImageView imageView;
+        private final TextView
+                authorNameText;
+        private final TextView nameText;
+        private final TextView timeText;
+        private final TextView kcalText;
+        private final TextView likesText;
 
 
         public RecipeHolder(@NonNull View itemView) {

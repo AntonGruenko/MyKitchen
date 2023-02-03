@@ -16,9 +16,9 @@ import com.example.uniorproject.noDb.NoDb;
 import java.util.List;
 
 public class SelectedTagsAdapter extends RecyclerView.Adapter<SelectedTagsAdapter.SelectedTagsAdapterHolder> {
-    private Context context;
-    private LayoutInflater inflater;
-    private List<String> tagList;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final List<String> tagList;
 
     public SelectedTagsAdapter(Context context, List<String> tagList) {
         this.context = context;
@@ -35,12 +35,14 @@ public class SelectedTagsAdapter extends RecyclerView.Adapter<SelectedTagsAdapte
 
     @Override
     public void onBindViewHolder(@NonNull SelectedTagsAdapterHolder holder, int position) {
-        ((SelectedTagsAdapterHolder)holder).deleteButton.setText(tagList.get(position));
-        ((SelectedTagsAdapterHolder)holder).deleteButton.setOnClickListener(new View.OnClickListener() {
+        holder.deleteButton.setText(tagList.get(position));
+        holder.deleteButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                tagList.remove(holder.getAdapterPosition());
-                notifyItemRemoved(holder.getAdapterPosition());
+                if(holder.getAdapterPosition() != -1) {
+                    tagList.remove(holder.getAdapterPosition());
+                    notifyItemRemoved(holder.getAdapterPosition());
+                }
             }
         });
     }
@@ -51,7 +53,7 @@ public class SelectedTagsAdapter extends RecyclerView.Adapter<SelectedTagsAdapte
     }
 
     static class SelectedTagsAdapterHolder extends RecyclerView.ViewHolder{
-        private Button deleteButton;
+        private final Button deleteButton;
         public SelectedTagsAdapterHolder(@NonNull View itemView) {
             super(itemView);
             deleteButton = itemView.findViewById(R.id.delete_button);

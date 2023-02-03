@@ -4,19 +4,19 @@ import java.util.Objects;
 
 public class Recipe {
     private int id;
-    private String name;
-    private User author;
-    private String ingredients;
-    private String guide;
-    private String reccomendations;
-    private int time;
-    private int kcal;
-    private int proteins;
-    private int fats;
-    private int carbohydrates;
-    private int sugar;
-    private int complexity;
-    private String tags;
+    private final String name;
+    private final User author;
+    private final String ingredients;
+    private final String guide;
+    private final String reccomendations;
+    private final int time;
+    private final int kcal;
+    private final int proteins;
+    private final int fats;
+    private final int carbohydrates;
+    private final int sugar;
+    private final int complexity;
+    private final String tags;
 
     public Recipe(
             int id,

@@ -132,4 +132,30 @@ public class UserMapper {
 
         return user;
     }
+
+    public static User userFromSenderJson(JSONObject jsonObject){
+        User user = null;
+
+        try {
+            user = userFromJson(jsonObject.getJSONObject("sender"));
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return user;
+    }
+
+    public static User userFromReceiverJson(JSONObject jsonObject){
+        User user = null;
+
+        try {
+            user = userFromJson(jsonObject.getJSONObject("receiver"));
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return user;
+    }
 }

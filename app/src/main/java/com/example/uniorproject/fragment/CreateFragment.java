@@ -1,5 +1,6 @@
 package com.example.uniorproject.fragment;
 
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.fragment.app.Fragment;
@@ -8,11 +9,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentCreateBinding;
 import com.example.uniorproject.databinding.FragmentFeedBinding;
 
 public class CreateFragment extends Fragment {
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -22,6 +25,7 @@ public class CreateFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+        context = getContext();
         FragmentCreateBinding binding = FragmentCreateBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         changeFragment(new CreateRecipeFragment());
@@ -39,6 +43,13 @@ public class CreateFragment extends Fragment {
                 changeFragment(new CreateRecipeFragment());
             }
         });
+
+        binding.videoButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                changeFragment(new CreateVideoFragment());
+            }
+        });
         return view;
 
 
@@ -48,7 +59,7 @@ public class CreateFragment extends Fragment {
         if (fragment == null) {
             return false;
         } else {
-            getActivity().getSupportFragmentManager()
+            ((MainActivity) context).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.create_container, fragment)
                     .commit();

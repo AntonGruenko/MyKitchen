@@ -41,8 +41,8 @@ public class RegisterActivity extends AppCompatActivity {
     private String secondPasswordString;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
-    private User newUser = new User();
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference("avatars");
+    private final User newUser = new User();
+    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference("avatars");
     private Uri imageUri;
     private ImageView avatarImage;
 

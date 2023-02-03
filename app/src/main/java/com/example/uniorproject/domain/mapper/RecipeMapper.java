@@ -1,5 +1,8 @@
 package com.example.uniorproject.domain.mapper;
 
+import static com.example.uniorproject.domain.mapper.PostMapper.postFromJson;
+
+import com.example.uniorproject.domain.Post;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.domain.User;
 
@@ -71,6 +74,19 @@ public class RecipeMapper {
         }
 
         return recipe;
+    }
+
+    public static Post postFromPostLikeJson(JSONObject jsonObject){
+        Post post = null;
+
+        try {
+            post = postFromJson(jsonObject.getJSONObject("postDto"));
+        }
+        catch (JSONException e){
+            e.printStackTrace();
+        }
+
+        return post;
     }
 
     public static Recipe recipeFromRecipeCommentJson(JSONObject jsonObject){

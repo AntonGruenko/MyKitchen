@@ -20,10 +20,10 @@ import com.squareup.picasso.Picasso;
 import java.util.List;
 
 public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.RecipeDataHolder> {
-    private Context context;
-    private List<String> elements;
-    private LayoutInflater inflater;
-    private int contentType;
+    private final Context context;
+    private final List<String> elements;
+    private final LayoutInflater inflater;
+    private final int contentType;
     private List<Picture> pictures;
 
     public RecipeDataAdapter(Context context, List<String> elements, int contentType, List<Picture> pictures) {
@@ -59,7 +59,7 @@ public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.Re
         if(contentType == 2) {
             try {
                 try {
-                    Picasso.with(context).load(NoDb.PICTURE_LIST.get(position + 1).getLink()).into(((RecipeDataHolder) holder).elementImage);
+                    Picasso.with(context).load(NoDb.PICTURE_LIST.get(position + 1).getLink()).into(holder.elementImage);
                 }
                 catch (IllegalArgumentException e){}
             }

@@ -53,10 +53,11 @@ public class CreatePostFragment extends Fragment {
 
     private static final int IMAGE_REQUEST = 1;
     private ImageView postImage;
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads");
+    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads");
     private Uri imageUri;
     private Post post;
     private SharedPreferences sharedPreferences;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -68,6 +69,7 @@ public class CreatePostFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentCreatePostBinding binding = FragmentCreatePostBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        context = getContext();
 
         sharedPreferences = getActivity().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
         post = new Post();
@@ -75,12 +77,28 @@ public class CreatePostFragment extends Fragment {
         binding.postButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new VolleyAPI(getActivity()).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
+                binding.postButton.setClickable(false);
+                new VolleyAPI(context).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
                     @Override
                     public void onSuccess(JSONObject response) {
                         post.setAuthor(UserMapper.userFromJson(response));
                         post.setText(binding.editText.getText().toString());
-                        new VolleyAPI(getActivity()).addPost(post);
+                        new VolleyAPI(getActivity()).addPost(post, new VolleyCallback() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+
+                                Toast.makeText(getContext(), "Опубликовано!", Toast.LENGTH_LONG).show();
+                                getParentFragmentManager()
+                                        .beginTransaction()
+                                        .replace(R.id.fragment_container, new PostFragment())
+                                        .commit();
+                            }
+
+                            @Override
+                            public void onError(@Nullable VolleyError error) {
+
+                            }
+                        });
                     }
 
                     @Override
@@ -114,7 +132,7 @@ public class CreatePostFragment extends Fragment {
         if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
             postImage = getActivity().findViewById(R.id.post_image);
-            Picasso.with(getContext()).load(imageUri).into(postImage);
+            Picasso.with(context).load(imageUri).into(postImage);
             postImage.setImageURI(imageUri);
             uploadPicture();
 

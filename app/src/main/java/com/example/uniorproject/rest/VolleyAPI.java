@@ -18,8 +18,10 @@ import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.adapter.RecipeSearchAdapter;
 import com.example.uniorproject.domain.Day;
 import com.example.uniorproject.domain.Meal;
+import com.example.uniorproject.domain.Message;
 import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Post;
+import com.example.uniorproject.domain.PostLike;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.domain.RecipeComment;
 import com.example.uniorproject.domain.RecipeLike;
@@ -27,6 +29,7 @@ import com.example.uniorproject.domain.Subscription;
 import com.example.uniorproject.domain.User;
 import com.example.uniorproject.domain.mapper.DayMapper;
 import com.example.uniorproject.domain.mapper.MealMapper;
+import com.example.uniorproject.domain.mapper.MessageMapper;
 import com.example.uniorproject.domain.mapper.PictureMapper;
 import com.example.uniorproject.domain.mapper.PostMapper;
 import com.example.uniorproject.domain.mapper.RecipeCommentMapper;
@@ -34,11 +37,15 @@ import com.example.uniorproject.domain.mapper.RecipeMapper;
 import com.example.uniorproject.domain.mapper.SubscriptionMapper;
 import com.example.uniorproject.domain.mapper.UserMapper;
 import com.example.uniorproject.noDb.NoDb;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,13 +54,12 @@ public class VolleyAPI implements AppAPI{
 
     public static final String API = "API";
     private final Context context;
-    public static final String BASE_URL = "https://bc37-91-227-189-93.eu.ngrok.io";
-    private Response.ErrorListener errorListener;
+    public static final String BASE_URL = "https://a36d-91-227-189-93.eu.ngrok.io";
+    private final Response.ErrorListener errorListener;
 
     public VolleyAPI(Context context) {
         this.context = context;
         errorListener = error -> {
-            Log.d(API, error.toString());
 
         };
     }
@@ -77,8 +83,8 @@ public class VolleyAPI implements AppAPI{
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 User user = UserMapper.userFromJson(jsonObject);
                                 NoDb.USER_LIST.add(user);
-                                Log.d(API, user.getName());
                             }
+
                         }
                         catch (JSONException e) {
                             e.printStackTrace();
@@ -167,16 +173,13 @@ public class VolleyAPI implements AppAPI{
                                 JSONObject jsonObject = response.getJSONObject(i);
                                 Recipe recipe = RecipeMapper.recipeFromJson(jsonObject);
                                 NoDb.RECIPE_LIST.add(recipe);
-
-                                Log.d(API, recipe.getName());
-
-
                                 try {
                                     ((MainActivity) context).updateRecipeAdapter();
                                 } catch(NullPointerException e){
 
                                 }
                             }
+                            Collections.reverse(NoDb.RECIPE_LIST);
 
                             callback.onSuccess(null);
                         }
@@ -190,6 +193,29 @@ public class VolleyAPI implements AppAPI{
         );
 
         requestQueue.add(jsonArrayRequest);
+    }
+
+    @Override
+    public void findRecipeById(int id, VolleyCallback callback) {
+        String url = BASE_URL + "/recipe/" + id;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONObject>() {
+                    @Override
+                    public void onResponse(JSONObject response) {
+                        callback.onSuccess(response);
+                    }
+                },
+
+                errorListener
+        );
+
+        requestQueue.add(jsonObjectRequest);
     }
 
     public void findRecipesByAuthor(int authorId, VolleyCallback callback){
@@ -656,6 +682,8 @@ public class VolleyAPI implements AppAPI{
             NoDb.RECIPE_BY_TAGS_LIST.clear();
             requestQueue.add(jsonArrayRequest);
         }
+
+
     }
 
     @Override
@@ -736,7 +764,7 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
-    public void fillPost() {
+    public void fillPost(int postType, VolleyCallback callback) {
         String url = BASE_URL + "/post";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -749,25 +777,36 @@ public class VolleyAPI implements AppAPI{
                     @Override
                     public void onResponse(JSONArray response) {
                         NoDb.POST_LIST.clear();
-                        try {
-                            for (int i = 0; i < response.length(); i++) {
-                                JSONObject jsonObject = response.getJSONObject(i);
-                                Post post = PostMapper.postFromJson(jsonObject);
-                                NoDb.POST_LIST.add(post);
-
-                                Log.d(API, post.getText());
-
-                                try {
-                                    ((MainActivity) context).updatePostAdapter();
-                                }
-                                catch (NullPointerException e){
+                        if(postType == 1) {
+                            try {
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject jsonObject = response.getJSONObject(i);
+                                    Post post = PostMapper.postFromJson(jsonObject);
+                                    if(!post.getPicture().contains("videos")) {
+                                        NoDb.POST_LIST.add(post);
+                                    }
 
                                 }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
                             }
                         }
-                        catch (JSONException e) {
-                            e.printStackTrace();
+                        else{
+                            try {
+                                for (int i = 0; i < response.length(); i++) {
+                                    JSONObject jsonObject = response.getJSONObject(i);
+                                    Post post = PostMapper.postFromJson(jsonObject);
+                                    if(post.getPicture().contains("videos")) {
+                                        NoDb.POST_LIST.add(post);
+                                    }
+
+                                }
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
                         }
+                        Collections.reverse(NoDb.POST_LIST);
+                        callback.onSuccess(null);
                     }
                 },
 
@@ -798,13 +837,6 @@ public class VolleyAPI implements AppAPI{
                                 Post post = PostMapper.postFromJson(jsonObject);
                                 NoDb.POST_LIST.add(post);
 
-
-                                try {
-                                    ((MainActivity) context).updateProfilePostAdapter();
-                                }
-                                catch (NullPointerException e){
-
-                                }
                                 callback.onSuccess(null);
                             }
                         }
@@ -1043,6 +1075,41 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
+    public void findDaysByUser(int userId, VolleyCallback callback) {
+        String url = BASE_URL + "/days/user/" + userId;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        NoDb.DAYS_BY_USER_LIST.clear(); 
+                        for (int i = 0; i < response.length(); i++) {
+                            try {
+                                NoDb.DAYS_BY_USER_LIST.add(DayMapper.dayFromJson(response.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        callback.onSuccess(null);
+                    }
+                },
+
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        callback.onError(error);
+                    }
+                }
+        );
+
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    @Override
     public void findDayById(int id, VolleyCallback callback) {
         String url = BASE_URL + "/days/" + id;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
@@ -1084,7 +1151,7 @@ public class VolleyAPI implements AppAPI{
                         for (int i = 0; i < response.length(); i++) {
                             try {
                                 JSONObject jsonObject = response.getJSONObject(i);
-                                callback.onSuccess(jsonObject);
+                                NoDb.PICTURE_LIST.add(PictureMapper.pictureFromJson(jsonObject));
                                 try {
                                     ((MainActivity) context).updateCurrentRecipeAdapter();
                                 }
@@ -1094,6 +1161,7 @@ public class VolleyAPI implements AppAPI{
                                 e.printStackTrace();
                             }
                         }
+                        callback.onSuccess(null);
                     }
                 },
                 new Response.ErrorListener() {
@@ -1275,8 +1343,103 @@ public class VolleyAPI implements AppAPI{
         requestQueue.add(stringRequest);
     }
 
+    @Override
+    public void findMessagesBySenderAndReceiver(int senderId, int receiverId, VolleyCallback callback) {
+        String url = BASE_URL + "/message/" + senderId + "/" + receiverId;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        NoDb.MESSAGE_LIST.clear();
+                        for(int i = 0; i < response.length(); ++i) {
+                            try {
+                                NoDb.MESSAGE_LIST.add(MessageMapper.messageFromJson(response.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+                        callback.onSuccess(null);
+                    }
+                },
+                errorListener
+        );
+
+        requestQueue.add(jsonArrayRequest);
+    }
+
+    @Override
+    public void findMessagesByUser(int userId, VolleyCallback callback) {
+        String url = BASE_URL + "/message/user/" + userId;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
+                Request.Method.GET,
+                url,
+                null,
+                new Response.Listener<JSONArray>() {
+                    @Override
+                    public void onResponse(JSONArray response) {
+                        NoDb.MESSAGES_FEED_LIST.clear();
+                        for(int i = 0; i < response.length(); ++i) {
+                            try {
+                                NoDb.MESSAGES_FEED_LIST.add(MessageMapper.messageFromJson(response.getJSONObject(i)));
+                            } catch (JSONException e) {
+                                e.printStackTrace();
+                            }
+                        }
+
+                        List<Message> messagesToDelete = new ArrayList<>();
+                        for (int i = NoDb.MESSAGES_FEED_LIST.size() - 1; i >= 0; --i) {
+                            Message message = NoDb.MESSAGES_FEED_LIST.get(i);
+                            for (int j = i - 1; j >= 0; --j) {
+                                if((NoDb.MESSAGES_FEED_LIST.get(j).getSender().getId() == message.getSender().getId() && NoDb.MESSAGES_FEED_LIST.get(j).getReceiver().getId() == message.getReceiver().getId()) ||
+                                        (NoDb.MESSAGES_FEED_LIST.get(j).getSender().getId() == message.getReceiver().getId() && NoDb.MESSAGES_FEED_LIST.get(j).getReceiver().getId() == message.getSender().getId())){
+                                    messagesToDelete.add(NoDb.MESSAGES_FEED_LIST.get(j));
+                                }
+                            }
+
+                        }
+
+                        NoDb.MESSAGES_FEED_LIST.removeAll(messagesToDelete);
+                        callback.onSuccess(null);
+                    }
+                },
+                errorListener
+        );
+
+        requestQueue.add(jsonArrayRequest);
+    }
+
     public void findRecipeLikesByRecipe(int recipeId, VolleyCallback callback) {
         String url = BASE_URL + "/recipeLikes/" + recipeId;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("num", response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        callback.onSuccess(jsonObject);
+                    }
+                },
+                errorListener
+        );
+
+        requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void findPostLikesByPost(int postId, VolleyCallback callback) {
+        String url = BASE_URL + "/postLikes/" + postId;
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(
                 Request.Method.GET,
@@ -1323,6 +1486,30 @@ public class VolleyAPI implements AppAPI{
         requestQueue.add(stringRequest);
     }
 
+    public void checkPostLikeByUser(int postId, int userId, VolleyCallback callback) {
+        String url = BASE_URL + "/postLikes/checkLike?postId=" + postId + "&userId=" + userId;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.GET,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        JSONObject jsonObject = new JSONObject();
+                        try {
+                            jsonObject.put("res", response);
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                        callback.onSuccess(jsonObject);
+                    }
+                },
+                errorListener
+        );
+
+        requestQueue.add(stringRequest);
+    }
+
     @Override
     public void addUser(User user) {
         String url = BASE_URL + "/user";
@@ -1337,7 +1524,6 @@ public class VolleyAPI implements AppAPI{
                     @Override
                     public void onResponse(String response) {
                         fillUser();
-                        Log.d(API, response);
                     }
                 },
                 errorListener) {
@@ -1431,10 +1617,11 @@ public class VolleyAPI implements AppAPI{
 
                     @Override
                     public void onResponse(String response) {
-                        fillRecipe(new VolleyCallback() {
+                        JsonObject jsonObject = new JsonParser().parse(response).getAsJsonObject();
+                        findRecipeById(Integer.parseInt(jsonObject.get("id").getAsString()), new VolleyCallback() {
                             @Override
                             public void onSuccess(JSONObject response) {
-                                callback.onSuccess(null);
+                                callback.onSuccess(response);
                             }
 
                             @Override
@@ -1442,7 +1629,7 @@ public class VolleyAPI implements AppAPI{
 
                             }
                         });
-                        Log.d(API, response);
+
                     }
                 },
                 errorListener) {
@@ -1474,7 +1661,7 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
-    public void addPost(Post post) {
+    public void addPost(Post post, VolleyCallback callback) {
         String url = BASE_URL + "/post";
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
@@ -1486,8 +1673,7 @@ public class VolleyAPI implements AppAPI{
 
                     @Override
                     public void onResponse(String response) {
-                        fillPost();
-                        Log.d(API, response);
+                        callback.onSuccess(null);
                     }
                 },
                 errorListener) {
@@ -1619,7 +1805,49 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
-    public void deleteMeal(Meal meal) {
+    public void addPostLike(PostLike postLike, VolleyCallback callback) {
+        String url = BASE_URL + "/postLikes";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>(){
+
+                    @Override
+                    public void onResponse(String response) {
+                        findPostLikesByPost(postLike.getPost().getId(), new VolleyCallback() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                callback.onSuccess(response);
+                            }
+
+                            @Override
+                            public void onError(VolleyError error) {
+
+                            }
+                        });
+                    }
+                },
+                errorListener) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("postId", String.valueOf(postLike.getPost().getId()));
+                params.put("likerId", String.valueOf(postLike.getLiker().getId()));
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void deleteMeal(Meal meal, VolleyCallback callback) {
         String url = BASE_URL + "/meals/" + meal.getId();
         RequestQueue requestQueue = Volley.newRequestQueue(context);
         StringRequest stringRequest = new StringRequest(
@@ -1629,6 +1857,7 @@ public class VolleyAPI implements AppAPI{
                     @Override
                     public void onResponse(String response) {
                         fillMeals();
+                        callback.onSuccess(null);
                     }
                 },
                 errorListener);
@@ -1822,6 +2051,51 @@ public class VolleyAPI implements AppAPI{
     }
 
     @Override
+    public void addMessage(Message message, VolleyCallback callback) {
+        String url = BASE_URL + "/message";
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.POST,
+                url,
+                new Response.Listener<String>(){
+
+                    @Override
+                    public void onResponse(String response) {
+                        findMessagesBySenderAndReceiver(message.getSender().getId(), message.getReceiver().getId(), new VolleyCallback() {
+                        @Override
+                            public void onSuccess(JSONObject response) {
+                                callback.onSuccess(response);
+                            }
+
+                            @Override
+                            public void onError(@Nullable VolleyError error) {
+
+                            }
+                        });
+                    }
+                },
+                errorListener) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("senderId", String.valueOf(message.getSender().getId()));
+                params.put("receiverId", String.valueOf(message.getReceiver().getId()));
+                params.put("picture", String.valueOf(message.getPicture()));
+                params.put("text", message.getText());
+
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+    }
+
+    @Override
     public void deleteRecipe(int id){
 
     }
@@ -1840,6 +2114,34 @@ public class VolleyAPI implements AppAPI{
                             @Override
                             public void onSuccess(JSONObject response) {
                                callback.onSuccess(response);
+                            }
+
+                            @Override
+                            public void onError(VolleyError error) {
+
+                            }
+                        });
+                    }
+                },
+                errorListener);
+
+        requestQueue.add(stringRequest);
+    }
+
+    @Override
+    public void deletePostLike(Post post, User user, VolleyCallback callback) {
+        String url = BASE_URL + "/postLikes/" + post.getId() + "/" + user.getId();
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.DELETE,
+                url,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
+                        findPostLikesByPost(post.getId(), new VolleyCallback() {
+                            @Override
+                            public void onSuccess(JSONObject response) {
+                                callback.onSuccess(response);
                             }
 
                             @Override

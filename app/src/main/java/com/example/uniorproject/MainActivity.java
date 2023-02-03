@@ -50,8 +50,8 @@ public class MainActivity extends AppCompatActivity {
 
     private ActivityMainBinding binding;
     private Uri imageUri;
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
-    private StorageReference userStorageReference = FirebaseStorage.getInstance().getReference("avatars");
+    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
+    private final StorageReference userStorageReference = FirebaseStorage.getInstance().getReference("avatars");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +77,14 @@ public class MainActivity extends AppCompatActivity {
 
             }
         });
+        SharedPreferences sharedPreferences = getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sp.edit();
+        editor.putFloat("recipeKcal", 0);
+        editor.putFloat("recipeProteins", 0);
+        editor.putFloat("recipeFats", 0);
+        editor.putFloat("recipeCarbohydrates", 0);
+        editor.putFloat("recipeSugar", 0);
+        editor.commit();
         new VolleyAPI(this).fillUser();
         new VolleyAPI(this).fillRecipe(new VolleyCallback() {
             @Override
@@ -148,31 +156,12 @@ public class MainActivity extends AppCompatActivity {
         fragment.updateAdapter();
     }
 
-    public void updateProfileRecipeAdapter(){
-        ProfileFragment fragment = ((ProfileFragment)
-                getSupportFragmentManager().findFragmentByTag("UserProfile"));
-        fragment.updateRecipeAdapter();
-
-    }
-
-    public void updateProfilePostAdapter(){
-        ProfileFragment fragment = ((ProfileFragment)
-                getSupportFragmentManager().findFragmentByTag("UserProfile"));
-        fragment.updatePostAdapter();
-
-    }
-
     public void updateCurrentRecipeAdapter(){
         RecipeFragment fragment = ((RecipeFragment)
                 getSupportFragmentManager().findFragmentByTag("RecipeFragment"));
         fragment.updateAdapter();
     }
 
-    public void updatePostAdapter(){
-        PostFragment fragment = ((PostFragment)
-        getSupportFragmentManager().findFragmentByTag("PostFeed"));
-        fragment.updateAdapter();
-    }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {

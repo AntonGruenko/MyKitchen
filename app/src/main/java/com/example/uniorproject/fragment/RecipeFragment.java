@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.GridLayoutManager;
@@ -16,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.CommentAdapter;
 import com.example.uniorproject.adapter.RecipeDataAdapter;
@@ -43,21 +45,39 @@ import java.util.Calendar;
 import java.util.List;
 
 public class RecipeFragment extends Fragment {
-    private int recipeId;
+    private final int recipeId;
     private int minutes, hours;
     private List<String> ingredients, guide, tags;
     private RecipeDataAdapter ingredientsAdapter, guideAdapter, tagsAdapter;
     private ShoppingListDatabase database;
     private User currentUser;
+    private Recipe recipe;
     private SharedPreferences sharedPreferences;
     private int likeId;
     private CommentAdapter recipeCommentAdapter;
     private String newCommentContent;
     private RecipeComment newComment;
+    private Context context;
 
-    public RecipeFragment(int recipeId) {
+    public static final short FROM_FEED = 1;
+    public static final short FROM_PROFILE = 2;
+    public static final short FROM_ANOTHER_PROFILE = 3;
+    public static final short FROM_SEARCH = 4;
+
+    private int fromFragment;
+    private short userId;
+
+    public RecipeFragment(int recipeId, short fromFragment) {
         this.recipeId = recipeId;
+        this.fromFragment = fromFragment;
     }
+
+    public RecipeFragment(int recipeId, int fromFragment, short userId) {
+        this.recipeId = recipeId;
+        this.fromFragment = fromFragment;
+        this.userId = userId;
+    }
+
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -69,12 +89,49 @@ public class RecipeFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentRecipeBinding binding = FragmentRecipeBinding.inflate(inflater);
         View view = binding.getRoot();
-        Recipe recipe = NoDb.RECIPE_LIST.get(recipeId);
-        sharedPreferences = getContext().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
-        new VolleyAPI(getContext()).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
+        context = getContext();
+        for (Recipe i : NoDb.RECIPE_LIST) {
+            if(i.getId() == recipeId){
+                recipe = i;
+                break;
+            }
+        }
+        sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        new VolleyAPI(context).findPicturesByRecipe(recipe.getId(), new VolleyCallback() {
+            @Override
+            public void onSuccess(JSONObject response) {
+                guideAdapter = new RecipeDataAdapter(context, guide,2, NoDb.PICTURE_LIST);
+                binding.recipeGuide.setAdapter(guideAdapter);
+                binding.recipeGuide.setLayoutManager(new LinearLayoutManager(context));
+            }
+
+            @Override
+            public void onError(@Nullable VolleyError error) {
+
+            }
+        });
+        new VolleyAPI(context).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) {
                 currentUser = UserMapper.userFromJson(response);
+                new VolleyAPI(context).checkRecipeLikeByUser(recipe.getId(), currentUser.getId(), new VolleyCallback() {
+                    @Override
+                    public void onSuccess(JSONObject response) {
+                        try {
+                            boolean res = response.getBoolean("res");
+                            if (res) {
+                                binding.recipeLikes.setChecked(true);
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
+
+                    @Override
+                    public void onError(@Nullable VolleyError error) {
+
+                    }
+                });
             }
 
             @Override
@@ -90,67 +147,64 @@ public class RecipeFragment extends Fragment {
         binding.recipeAuthorName.setText(String.format("Автор: %s", recipe.getAuthor().getName()));
         binding.recipeTime.setText(String.format("%d:%d", hours, minutes));
         binding.recipeKcal.setText(String.valueOf(recipe.getKcal()));
-        binding.recipeProteins.setText(String.format("Белки на 100г: %d", recipe.getProteins()));
-        binding.recipeFats.setText(String.format("Жиры на 100г: %d", recipe.getFats()));
-        binding.recipeCarbohydrates.setText(String.format("Углеводы на 100г: %d", recipe.getCarbohydrates()));
-        binding.recipeSugar.setText(String.format("Сахар на 100г: %d", recipe.getSugar()));
+        binding.recipeProteins.setText(String.format("Белки: %d", recipe.getProteins()));
+        binding.recipeFats.setText(String.format("Жиры: %d", recipe.getFats()));
+        binding.recipeCarbohydrates.setText(String.format("Углеводы: %d", recipe.getCarbohydrates()));
+        binding.recipeSugar.setText(String.format("Сахар: %d", recipe.getSugar()));
         binding.recipeRecommendations.setText("Рекомендации: " + recipe.getReccomendations());
 
         if(recipe.getComplexity() == 1){
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage2);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage2);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
         else if(recipe.getComplexity() == 2){
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
         else if(recipe.getComplexity() == 3){
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
 
         else if(recipe.getComplexity() == 4){
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
+            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
 
         else if(recipe.getComplexity() == 5){
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
-            Picasso.with(getContext()).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage5);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
+            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage5);
         }
 
         ingredients = convertStringToList(recipe.getIngredients());
         guide = convertStringToList(recipe.getGuide());
         tags = convertStringToList(recipe.getTags());
 
-        ingredientsAdapter = new RecipeDataAdapter(getActivity(), ingredients, 1);
+        ingredientsAdapter = new RecipeDataAdapter(context, ingredients, 1);
         binding.recipeIngredients.setAdapter(ingredientsAdapter);
-        binding.recipeIngredients.setLayoutManager(new LinearLayoutManager(getActivity()));
+        binding.recipeIngredients.setLayoutManager(new LinearLayoutManager(context));
 
-        guideAdapter = new RecipeDataAdapter(getActivity(), guide,2, NoDb.PICTURE_LIST);
-        binding.recipeGuide.setAdapter(guideAdapter);
-        binding.recipeGuide.setLayoutManager(new LinearLayoutManager(getActivity()));
-
-        tagsAdapter = new RecipeDataAdapter(getActivity(), tags, 1);
+        tagsAdapter = new RecipeDataAdapter(context, tags, 1);
         binding.recipeTags.setAdapter(tagsAdapter);
-        binding.recipeTags.setLayoutManager(new GridLayoutManager(getActivity(), 3));
+        binding.recipeTags.setLayoutManager(new GridLayoutManager(context, 3));
 
-        new VolleyAPI(getContext()).findRecipeLikesByRecipe(recipe.getId(), new VolleyCallback() {
+
+        new VolleyAPI(context).findRecipeLikesByRecipe(recipe.getId(), new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) {
                 try {
@@ -169,13 +223,13 @@ public class RecipeFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         binding.recipeLikes.setClickable(false);
-                        new VolleyAPI(getContext()).checkRecipeLikeByUser(recipe.getId(), currentUser.getId(), new VolleyCallback() {
+                        new VolleyAPI(context).checkRecipeLikeByUser(recipe.getId(), currentUser.getId(), new VolleyCallback() {
                             @Override
                             public void onSuccess(JSONObject response) {
                                 try {
                                     boolean res = response.getBoolean("res");
                                     if(res){
-                                        new VolleyAPI(getContext()).deleteRecipeLike(recipe, currentUser, new VolleyCallback() {
+                                        new VolleyAPI(context).deleteRecipeLike(recipe, currentUser, new VolleyCallback() {
                                             @Override
                                             public void onSuccess(JSONObject response) {
                                                 binding.recipeLikes.setClickable(true);
@@ -194,7 +248,7 @@ public class RecipeFragment extends Fragment {
                                         });
                                     }
                                     else {
-                                        new VolleyAPI(getContext()).addRecipeLike(new RecipeLike(recipe, currentUser), new VolleyCallback() {
+                                        new VolleyAPI(context).addRecipeLike(new RecipeLike(recipe, currentUser), new VolleyCallback() {
                                             @Override
                                             public void onSuccess(JSONObject response) {
                                                 binding.recipeLikes.setClickable(true);
@@ -234,13 +288,13 @@ public class RecipeFragment extends Fragment {
                     @Override
                     public void onClick(View view) {
                         binding.recipeLikes.setClickable(false);
-                        new VolleyAPI(getContext()).checkRecipeLikeByUser(recipe.getId(), currentUser.getId(), new VolleyCallback() {
+                        new VolleyAPI(context).checkRecipeLikeByUser(recipe.getId(), currentUser.getId(), new VolleyCallback() {
                             @Override
                             public void onSuccess(JSONObject response) {
                                 try {
                                     boolean res = response.getBoolean("res");
                                     if(res){
-                                        new VolleyAPI(getContext()).deleteRecipeLike(recipe, currentUser, new VolleyCallback() {
+                                        new VolleyAPI(context).deleteRecipeLike(recipe, currentUser, new VolleyCallback() {
                                             @Override
                                             public void onSuccess(JSONObject response) {
                                                 binding.recipeLikes.setClickable(true);
@@ -259,7 +313,7 @@ public class RecipeFragment extends Fragment {
                                         });
                                     }
                                     else {
-                                        new VolleyAPI(getContext()).addRecipeLike(new RecipeLike(recipe, currentUser), new VolleyCallback() {
+                                        new VolleyAPI(context).addRecipeLike(new RecipeLike(recipe, currentUser), new VolleyCallback() {
                                             @Override
                                             public void onSuccess(JSONObject response) {
                                                 binding.recipeLikes.setClickable(true);
@@ -293,12 +347,12 @@ public class RecipeFragment extends Fragment {
             }
         });
 
-        new VolleyAPI(getContext()).findRecipeCommentsByRecipe(recipe.getId(), new VolleyCallback() {
+        new VolleyAPI(context).findRecipeCommentsByRecipe(recipe.getId(), new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) {
-                recipeCommentAdapter = new CommentAdapter(getContext(), NoDb.RECIPE_COMMENTS_LIST);
+                recipeCommentAdapter = new CommentAdapter(context, NoDb.RECIPE_COMMENTS_LIST);
                 binding.recipeComments.setAdapter(recipeCommentAdapter);
-                binding.recipeComments.setLayoutManager(new LinearLayoutManager(getContext()));
+                binding.recipeComments.setLayoutManager(new LinearLayoutManager(context));
             }
 
             @Override
@@ -319,28 +373,25 @@ public class RecipeFragment extends Fragment {
         binding.addToMealsButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new VolleyAPI(getContext()).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
+                binding.addToMealsButton.setClickable(false);
+                new VolleyAPI(context).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {
                     @Override
                     public void onSuccess(JSONObject response) {
                         User user = UserMapper.userFromJson(response);
                         Calendar currentCalendar = Calendar.getInstance();
-                        long registrationPeriod = currentCalendar.getTimeInMillis() - user.getRegistrationDate();
-                        int daysFromRegistration;
+                        Calendar userCalendar = Calendar.getInstance();
+                        userCalendar.setTimeInMillis(user.getRegistrationDate());
                         Calendar comparisonCalendar = Calendar.getInstance();
                         comparisonCalendar.setTimeInMillis(user.getRegistrationDate());
 
-                        if(comparisonCalendar.get(Calendar.DAY_OF_YEAR) < currentCalendar.get(Calendar.DAY_OF_YEAR)){
-                            daysFromRegistration = (int) (registrationPeriod / 86400000) + 1;
-                        }
-                        else {
-                            daysFromRegistration = (int) registrationPeriod / 86400000;
-                        }
-                        new VolleyAPI(getContext()).findDaysByUserAndDay(user.getId(), daysFromRegistration, new VolleyCallback() {
+                        int daysFromRegistration = currentCalendar.get(Calendar.DAY_OF_YEAR) - userCalendar.get(Calendar.DAY_OF_YEAR);
+
+                        new VolleyAPI(context).findDaysByUserAndDay(user.getId(), daysFromRegistration, new VolleyCallback() {
                             @Override
                             public void onSuccess(JSONObject response) {
                                 if (!response.toString().equals("[]")){
                                     Day day = DayMapper.dayFromJson(response);
-                                    new VolleyAPI(getContext()).updateDay(
+                                    new VolleyAPI(context).updateDay(
                                             day.getId(), user.getId(),
                                             day.getDay(),
                                             day.getKcal() + recipe.getKcal(),
@@ -351,7 +402,7 @@ public class RecipeFragment extends Fragment {
                                             new VolleyCallback() {
                                                 @Override
                                                 public void onSuccess(JSONObject response) {
-
+                                                    binding.addToMealsButton.setClickable(true);
                                                 }
 
                                                 @Override
@@ -361,14 +412,14 @@ public class RecipeFragment extends Fragment {
                                             });
 
                                     Meal meal = new Meal(currentUser, recipe, day);
-                                    new VolleyAPI(getContext()).addMeal(meal);
+                                    new VolleyAPI(context).addMeal(meal);
                                 }
                             }
 
                             @Override
-                            public void onError(VolleyError error) {
-                                if(error.networkResponse.statusCode == 500){
-                                    new VolleyAPI(getContext()).addDay(new Day(
+                            public void onError(VolleyError error){
+                                binding.addToMealsButton.setClickable(true);
+                                new VolleyAPI(context).addDay(new Day(
                                             user,
                                             daysFromRegistration,
                                             recipe.getKcal(),
@@ -376,7 +427,6 @@ public class RecipeFragment extends Fragment {
                                             recipe.getFats(),
                                             recipe.getCarbohydrates(),
                                             false));
-                                }
                             }
                         });
                     }
@@ -397,10 +447,10 @@ public class RecipeFragment extends Fragment {
                 binding.commentEditText.setText("");
                 if(!newCommentContent.isEmpty()){
                     newComment = new RecipeComment(currentUser, recipe, newCommentContent, 0);
-                    new VolleyAPI(getContext()).addRecipeComment(newComment, new VolleyCallback() {
+                    new VolleyAPI(context).addRecipeComment(newComment, new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject response) {
-                            recipeCommentAdapter = new CommentAdapter(getContext(), NoDb.RECIPE_COMMENTS_LIST);
+                            recipeCommentAdapter = new CommentAdapter(context, NoDb.RECIPE_COMMENTS_LIST);
                             binding.recipeComments.setAdapter(recipeCommentAdapter);
                         }
 
@@ -411,7 +461,7 @@ public class RecipeFragment extends Fragment {
                     });
                 }
                 else{
-                    Toast.makeText(getContext(), "Введите комментарий!", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(context, "Введите комментарий!", Toast.LENGTH_SHORT).show();
                 }
             }
         });
@@ -421,8 +471,38 @@ public class RecipeFragment extends Fragment {
             public void onClick(View view) {
                 getParentFragmentManager()
                         .beginTransaction()
-                        .replace(R.id.fragment_container, new AnotherProfileFragment(recipe.getAuthor().getId()), "RecipeFeed")
+                        .replace(R.id.fragment_container, new AnotherProfileFragment(recipe.getAuthor().getId(), recipe.getId()), "RecipeFeed")
                         .commit();
+            }
+        });
+
+        requireActivity().getOnBackPressedDispatcher().addCallback(getViewLifecycleOwner(), new OnBackPressedCallback(true) {
+            @Override
+            public void handleOnBackPressed() {
+                if(fromFragment == FROM_FEED) {
+                    ((MainActivity) context).getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new FeedFragment())
+                            .commit();
+                }
+                else if(fromFragment == FROM_ANOTHER_PROFILE){
+                    ((MainActivity) context).getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new AnotherProfileFragment(userId, recipe.getId()))
+                            .commit();
+                }
+                else if(fromFragment == FROM_PROFILE){
+                    ((MainActivity) context).getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new ProfileFragment())
+                            .commit();
+                }
+                else {
+                    ((MainActivity) context).getSupportFragmentManager()
+                            .beginTransaction()
+                            .replace(R.id.fragment_container, new SearchFragment())
+                            .commit();
+                }
             }
         });
 

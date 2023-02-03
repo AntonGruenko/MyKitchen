@@ -20,10 +20,10 @@ import com.example.uniorproject.noDb.NoDb;
 import java.util.List;
 
 public class RecipeTagsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
-    private LayoutInflater inflater;
-    private List<String> tagList;
-    private SelectedTagsAdapter selectedTagsAdapter;
+    private final Context context;
+    private final LayoutInflater inflater;
+    private final List<String> tagList;
+    private final SelectedTagsAdapter selectedTagsAdapter;
 
     public RecipeTagsAdapter(Context context, List<String> tagList) {
         this.context = context;
@@ -69,7 +69,7 @@ public class RecipeTagsAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     private class RecipeTagsAdapterHolder extends RecyclerView.ViewHolder {
 
-        private Button tagButton;
+        private final Button tagButton;
         public RecipeTagsAdapterHolder(@NonNull View itemView) {
             super(itemView);
             tagButton = itemView.findViewById(R.id.tag_button);

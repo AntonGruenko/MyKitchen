@@ -15,8 +15,10 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.CompoundButton;
+import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.RecipeFeedAdapter;
 import com.example.uniorproject.databinding.FragmentFeedBinding;
@@ -35,11 +37,13 @@ import org.json.JSONObject;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class FeedFragment extends Fragment {
 
     private RecipeFeedAdapter recipeFeedAdapter;
     private SharedPreferences sharedPreferences;
+    private Context context;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
@@ -54,8 +58,10 @@ public class FeedFragment extends Fragment {
 
         FragmentFeedBinding binding = FragmentFeedBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        context = getContext();
         binding.recipesRv.setItemAnimator(null);
         new VolleyAPI(getContext()).fillRecipe(new VolleyCallback() {
+
             @Override
             public void onSuccess(JSONObject response) {
                 binding.recipesRv.setVisibility(View.VISIBLE);
@@ -64,10 +70,8 @@ public class FeedFragment extends Fragment {
 
             @Override
             public void onError(@Nullable VolleyError error) {
-
             }
         });
-
         binding.addButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -82,42 +86,7 @@ public class FeedFragment extends Fragment {
             @Override
             public void onSuccess(JSONObject response) {
                 binding.recipesRv.setVisibility(View.VISIBLE);
-                new VolleyAPI(getContext()).findPreviews(new VolleyCallback() {
-                    @Override
-                    public void onSuccess(JSONObject response) {;
-                        recipeFeedAdapter = new RecipeFeedAdapter(getContext(), NoDb.RECIPE_LIST, new RecipeFeedAdapter.OnRecipeClickListener() {
-                            @Override
-                            public void onClick(Recipe recipe, int position) {
-                                NoDb.PICTURE_LIST.clear();
-                                new VolleyAPI(getContext()).findPicturesByRecipe(recipe.getId(), new VolleyCallback() {
-                                    @Override
-                                    public void onSuccess(JSONObject response) {
-                                        Picture picture = PictureMapper.pictureFromJson(response);
-                                        NoDb.PICTURE_LIST.add(picture);
-                                    }
-
-                                    @Override
-                                    public void onError(VolleyError error) {
-
-                                    }
-                                });
-                                getActivity().getSupportFragmentManager()
-                                        .beginTransaction()
-                                        .replace(R.id.fragment_container, new RecipeFragment(position), "RecipeFragment")
-                                        .commit();
-                            }
-                        }, NoDb.PICTURE_LIST);
-                        binding.recipesRv.setLayoutManager(new LinearLayoutManager(getContext()));
-                        binding.recipesRv.setAdapter(recipeFeedAdapter);
-
-                        recipeFeedAdapter.notifyDataSetChanged();
-                    }
-
-                    @Override
-                    public void onError(@Nullable VolleyError error) {
-
-                    }
-                });
+                getAllRecipes(binding);
             }
 
             @Override
@@ -132,7 +101,14 @@ public class FeedFragment extends Fragment {
                 for(Subscription subscription: NoDb.SUBSCRIPTION_LIST){
                     leaders.add(subscription.getLeader().getId());
                 }
-                new VolleyAPI(getContext()).findRecipesByAuthors(leaders, authorsCallback);
+                if(!leaders.isEmpty()) {
+                    new VolleyAPI(context).findRecipesByAuthors(leaders, authorsCallback);
+                }
+                else {
+                    NoDb.RECIPE_LIST.clear();
+                    recipeFeedAdapter.notifyDataSetChanged();
+                    Toast.makeText(context, "Ничего не найдено!", Toast.LENGTH_SHORT).show();
+                }
             }
 
             @Override
@@ -145,7 +121,7 @@ public class FeedFragment extends Fragment {
             @Override
             public void onSuccess(JSONObject response) {
                 User currentUser = UserMapper.userFromJson(response);
-                new VolleyAPI(getContext()).findSubscriptionByFollowerId(currentUser.getId(), followerCallback);
+                new VolleyAPI(context).findSubscriptionByFollowerId(currentUser.getId(), followerCallback);
             }
 
             @Override
@@ -157,15 +133,14 @@ public class FeedFragment extends Fragment {
         binding.subscribersSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if(b){
-                    new VolleyAPI(getContext()).findUserByEmail(sharedPreferences.getString("userEmail", ""), emailCallback);
-                }
-                else{
-                    new VolleyAPI(getContext()).fillRecipe(new VolleyCallback() {
+                if (b) {
+                    new VolleyAPI(context).findUserByEmail(sharedPreferences.getString("userEmail", ""), emailCallback);
+                } else {
+                    new VolleyAPI(context).fillRecipe(new VolleyCallback() {
                         @Override
                         public void onSuccess(JSONObject response) {
-                            getAllRecipes(binding);
-                        }
+                                getAllRecipes(binding);
+                            }
 
                         @Override
                         public void onError(@Nullable VolleyError error) {
@@ -183,31 +158,19 @@ public class FeedFragment extends Fragment {
     }
 
     private void getAllRecipes(FragmentFeedBinding binding){
-        new VolleyAPI(getContext()).findPreviews(new VolleyCallback() {
+        new VolleyAPI(context).findPreviews(new VolleyCallback() {
             @Override
             public void onSuccess(JSONObject response) {
-                recipeFeedAdapter = new RecipeFeedAdapter(getContext(), NoDb.RECIPE_LIST, new RecipeFeedAdapter.OnRecipeClickListener() {
+                recipeFeedAdapter = new RecipeFeedAdapter(context, NoDb.RECIPE_LIST, new RecipeFeedAdapter.OnRecipeClickListener() {
                     @Override
                     public void onClick(Recipe recipe, int position) {
-                        new VolleyAPI(getContext()).findPicturesByRecipe(recipe.getId(), new VolleyCallback() {
-                            @Override
-                            public void onSuccess(JSONObject response) {
-                                Picture picture = PictureMapper.pictureFromJson(response);
-                                NoDb.PICTURE_LIST.add(picture);
-                            }
-
-                            @Override
-                            public void onError(VolleyError error) {
-
-                            }
-                        });
-                        getActivity().getSupportFragmentManager()
+                        ((MainActivity)context).getSupportFragmentManager()
                                 .beginTransaction()
-                                .replace(R.id.fragment_container, new RecipeFragment(position), "RecipeFragment")
+                                .replace(R.id.fragment_container, new RecipeFragment(recipe.getId(), RecipeFragment.FROM_FEED), "RecipeFragment")
                                 .commit();
                     }
                 }, NoDb.PICTURE_LIST);
-                binding.recipesRv.setLayoutManager(new LinearLayoutManager(getContext()));
+                binding.recipesRv.setLayoutManager(new LinearLayoutManager(context));
                 binding.recipesRv.setAdapter(recipeFeedAdapter);
 
                 recipeFeedAdapter.notifyDataSetChanged();

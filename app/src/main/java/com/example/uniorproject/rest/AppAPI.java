@@ -3,8 +3,10 @@ package com.example.uniorproject.rest;
 import com.example.uniorproject.adapter.RecipeSearchAdapter;
 import com.example.uniorproject.domain.Day;
 import com.example.uniorproject.domain.Meal;
+import com.example.uniorproject.domain.Message;
 import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Post;
+import com.example.uniorproject.domain.PostLike;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.domain.RecipeComment;
 import com.example.uniorproject.domain.RecipeLike;
@@ -21,6 +23,8 @@ public interface AppAPI {
     void findUsersByName(String name, VolleyCallback callback);
 
     void fillRecipe(VolleyCallback callback);
+
+    void findRecipeById(int id, VolleyCallback callback);
 
     void findRecipesByAuthor(int authorId, VolleyCallback callback);
 
@@ -48,7 +52,7 @@ public interface AppAPI {
 
     void findUserByEmail(String email, VolleyCallback callback);
 
-    void fillPost();
+    void fillPost(int postType, VolleyCallback callback);
 
     void findPostByAuthor(int authorId, VolleyCallback callback);
 
@@ -64,6 +68,8 @@ public interface AppAPI {
 
     void findDaysByUserAndDay(int userId, int day, VolleyCallback callback);
 
+    void findDaysByUser(int userId, VolleyCallback callback);
+
     void findDayById(int id, VolleyCallback callback);
 
     void findPreviews(VolleyCallback callback);
@@ -75,6 +81,10 @@ public interface AppAPI {
     void findSubscriptionByFollowerId(int followerId, VolleyCallback callback);
 
     void checkSubscription(int leaderId, int followerId, VolleyCallback callback);
+
+    void findMessagesBySenderAndReceiver(int senderId, int receiverId, VolleyCallback callback);
+
+    void findMessagesByUser(int userId, VolleyCallback callback);
 
     void addUser(User user);
 
@@ -92,7 +102,7 @@ public interface AppAPI {
 
     void addRecipe(Recipe recipe, VolleyCallback callback);
 
-    void addPost(Post post);
+    void addPost(Post post, VolleyCallback callback);
 
     void addPicture(Picture picture);
 
@@ -100,7 +110,9 @@ public interface AppAPI {
 
     void addRecipeLike(RecipeLike recipeLike, VolleyCallback callback);
 
-    void deleteMeal(Meal meal);
+    void addPostLike(PostLike postLike, VolleyCallback callback);
+
+    void deleteMeal(Meal meal, VolleyCallback callback);
 
     void addDay(Day day);
 
@@ -118,11 +130,17 @@ public interface AppAPI {
 
     void addSubscription(Subscription subscription, VolleyCallback callback);
 
+    void addMessage(Message message, VolleyCallback callback);
+
     void findRecipeLikesByRecipe(int recipeId, VolleyCallback callback);
+
+    void findPostLikesByPost(int postId, VolleyCallback callback);
 
     void deleteRecipe(int id);
 
     void deleteRecipeLike(Recipe recipe, User user, VolleyCallback callback);
+
+    void deletePostLike(Post post, User user, VolleyCallback callback);
 
     void deleteSubscription(int leaderId, int followerId, VolleyCallback callback);
 

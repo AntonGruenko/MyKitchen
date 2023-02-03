@@ -64,7 +64,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                         @Override
                         public void onError(VolleyError error) {
-
+                            Toast.makeText(LoginActivity.this, "Аккаунт не найден!", Toast.LENGTH_SHORT).show();
                         }
                     });
                 }

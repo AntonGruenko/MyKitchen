@@ -21,6 +21,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentCreateRecipeBinding;
 import com.example.uniorproject.noDb.NoDb;
@@ -29,14 +30,16 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 public class CreateRecipeFragment extends Fragment {
     private Uri imageUri;
     private ImageView recipeImage;
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
-    SharedPreferences sharedPreferences;
-    SharedPreferences.Editor editor;
+    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
+    private SharedPreferences sharedPreferences;
+    private SharedPreferences.Editor editor;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,15 +51,18 @@ public class CreateRecipeFragment extends Fragment {
                              Bundle savedInstanceState) {
         FragmentCreateRecipeBinding binding = FragmentCreateRecipeBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        context = getContext();
 
         NoDb.PICTURE_LINK_LIST.add("");
+        ImageView recipeImage = view.findViewById(R.id.recipe_image);
+        Picasso.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).fit().into(recipeImage);
         binding.buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 if(binding.editTitle.getText().toString().equals("")
                         || binding.editTimeHours.getText().toString().equals("")
                         || binding.editTimeMinutes.getText().toString().equals("")) {
-                    Toast.makeText(getContext(), "Введите данные!", Toast.LENGTH_LONG).show();
+                    Toast.makeText(context, "Введите данные!", Toast.LENGTH_LONG).show();
                 }
                 else{
                     String recipeName = binding.editTitle.getText().toString();
@@ -65,7 +71,7 @@ public class CreateRecipeFragment extends Fragment {
                     String recipeRecommendations = binding.editRecommendations.getText().toString();
                     int recipeComplexity = (int) binding.complexity.getRating();
 
-                    sharedPreferences = getActivity().getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+                    sharedPreferences = ((MainActivity) context).getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
                     editor = sharedPreferences.edit();
                     editor.putString("recipeName", recipeName);
                     editor.putInt("recipeTime", recipeTime);
@@ -74,7 +80,7 @@ public class CreateRecipeFragment extends Fragment {
                     editor.apply();
 
                     CreateRecipeIngredientsFragment fragment = new CreateRecipeIngredientsFragment();
-                    getActivity().getSupportFragmentManager()
+                    ((MainActivity) context).getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.create_container, fragment, "setIngredients")
                             .commit();
@@ -106,7 +112,7 @@ public class CreateRecipeFragment extends Fragment {
         if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
             recipeImage = getActivity().findViewById(R.id.recipe_image);
-            Picasso.with(getContext()).load(imageUri).fit().into(recipeImage);
+            Picasso.with(context).load(imageUri).fit().into(recipeImage);
             recipeImage.setImageURI(imageUri);
             uploadPicture();
 
@@ -121,7 +127,7 @@ public class CreateRecipeFragment extends Fragment {
     private void uploadPicture(){
         if(imageUri != null) {
             String fileName = System.currentTimeMillis() + "." + getFileExtension(imageUri);
-            sharedPreferences = getActivity().getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+            sharedPreferences = context.getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
             editor = sharedPreferences.edit();
             StorageReference fileReference = storageReference.child(fileName);
             fileReference.putFile(imageUri).addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {

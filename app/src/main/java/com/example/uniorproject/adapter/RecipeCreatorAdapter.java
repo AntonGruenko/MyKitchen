@@ -3,6 +3,8 @@ package com.example.uniorproject.adapter;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
 import android.provider.MediaStore;
@@ -17,10 +19,12 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
+import com.example.uniorproject.database.ProductsDatabaseHelper;
 import com.example.uniorproject.noDb.NoDb;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.storage.FirebaseStorage;
@@ -30,15 +34,16 @@ import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.List;
 
 public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
-    private LayoutInflater layoutInflater;
-    private List<String> contentList;
-    private int fragmentType;
+    private final Context context;
+    private final LayoutInflater layoutInflater;
+    private final List<String> contentList;
+    private final int fragmentType;
     private Uri imageUri;
-    private StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
+    private final StorageReference storageReference = FirebaseStorage.getInstance().getReference("recipePictures");
 
     public RecipeCreatorAdapter(Context context, List<String> contentList, int fragmentType) {
         this.context = context;
@@ -67,7 +72,7 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
         else {
             ((RecipeCreatorHolder) holder).editContent.setHint("Шаг");
             try {
-                Picasso.with(context).load(NoDb.PICTURE_LINK_LIST.get(pos)).into(((RecipeCreatorHolder) holder).contentImage);
+                Picasso.with(context).load(NoDb.PICTURE_LINK_LIST.get(pos)).placeholder(R.drawable.ic_baseline_camera_alt_24).into(((RecipeCreatorHolder) holder).contentImage);
             }
             catch (IllegalArgumentException e){
 
@@ -84,9 +89,9 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 try {
                     if (fragmentType == 1) {
-                        NoDb.INGREDIENTS_LIST.set(pos, charSequence.toString());
+                        NoDb.INGREDIENTS_LIST.set(holder.getAdapterPosition(), charSequence.toString());
                     } else {
-                        NoDb.GUIDE_LIST.set(pos, charSequence.toString());
+                        NoDb.GUIDE_LIST.set(holder.getAdapterPosition(), charSequence.toString());
                     }
                 }
                 catch (IndexOutOfBoundsException e){
@@ -120,10 +125,13 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
     }
 
     public class RecipeCreatorHolder extends RecyclerView.ViewHolder {
-        private Button deleteButton;
-        private ImageView contentImage;
-        private TextView editContent;
+        private final Button deleteButton;
+        private final AppCompatImageView contentImage;
+        private final TextView editContent;
         private RecipeCreatorAdapter recipeCreatorAdapter;
+        private ProductsDatabaseHelper helper;
+        private SQLiteDatabase productsDb;
+        private Cursor cursor;
         public RecipeCreatorHolder(@NonNull View itemView) {
             super(itemView);
 
@@ -131,18 +139,51 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
             editContent = itemView.findViewById(R.id.edit_content);
             contentImage = itemView.findViewById(R.id.content_image);
 
+            helper = new ProductsDatabaseHelper(context);
+            if(fragmentType == 1){
+                try {
+                    helper.updateDataBase();
+                } catch (IOException mIOException) {
+                    throw new Error("UnableToUpdateDatabase");
+                }
+
+                productsDb = helper.getWritableDatabase();
+
+            }
             deleteButton.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    if(fragmentType == 1 && NoDb.INGREDIENTS_LIST.size() > 1) {
-                        NoDb.INGREDIENTS_LIST.remove(getAdapterPosition());
-                        recipeCreatorAdapter.notifyItemRemoved(getAdapterPosition());
+                    int position = getAdapterPosition();
+                    if(fragmentType == 1 && NoDb.INGREDIENTS_LIST.size() > 1 && position != -1) {
+                        NoDb.INGREDIENTS_LIST.remove(position);
+                        recipeCreatorAdapter.notifyItemRemoved(position);
+                        SharedPreferences sharedPreferences = context.getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+                        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+                        cursor = productsDb.rawQuery("SELECT * FROM products ORDER BY productTitle", null);
+                        cursor.moveToFirst();
+
+                        int id = NoDb.INGREDIENTS_DATABASE_LIST.get(position).first;
+                        float coeff = NoDb.INGREDIENTS_DATABASE_LIST.get(position).second;
+                        if(id != 0) {
+                            cursor.moveToPosition(id);
+                            editor.putFloat("recipeKcal", sharedPreferences.getFloat("recipeKcal", 0f) - cursor.getFloat(2) * coeff);
+                            editor.putFloat("recipeProteins", sharedPreferences.getFloat("recipeProteins", 0f) - cursor.getFloat(3) * coeff);
+                            editor.putFloat("recipeFats", sharedPreferences.getFloat("recipeFats", 0f) - cursor.getFloat(4) * coeff);
+                            editor.putFloat("recipeCarbohydrates", sharedPreferences.getFloat("recipeCarbohydrates", 0f) - cursor.getFloat(5) * coeff);
+                            if(id == 72){
+                                editor.putFloat("recipeSugar", sharedPreferences.getFloat("recipeSugar", 0f) - coeff * 100);
+                            }
+                            editor.apply();
+                        }
+                        NoDb.INGREDIENTS_DATABASE_LIST.remove(position);
+                        cursor.close();
                     }
-                    else if(fragmentType == 2 && NoDb.GUIDE_LIST.size() > 1){
-                        NoDb.GUIDE_LIST.remove(getAdapterPosition());
-                        contentImage.setImageDrawable(null);
-                        NoDb.PICTURE_LINK_LIST.remove(getAdapterPosition());
-                        recipeCreatorAdapter.notifyItemRemoved(getAdapterPosition());
+                    else if(fragmentType == 2 && NoDb.GUIDE_LIST.size() > 1 && position != -1){
+                        NoDb.GUIDE_LIST.remove(position);
+                        Picasso.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).fit().into(contentImage);
+                        NoDb.PICTURE_LINK_LIST.remove(position);
+                        recipeCreatorAdapter.notifyItemRemoved(position);
                     }
                 }
 
@@ -150,6 +191,9 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
 
             if(fragmentType == 1){
                 contentImage.setVisibility(View.GONE);
+            }
+            else {
+                Picasso.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).fit().into(contentImage);
             }
 
         }

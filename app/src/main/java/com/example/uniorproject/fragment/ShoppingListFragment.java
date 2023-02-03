@@ -1,6 +1,7 @@
 package com.example.uniorproject.fragment;
 
 import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
@@ -18,6 +19,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.TextView;
 
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.ShoppingListAdapter;
 import com.example.uniorproject.database.Product;
@@ -34,6 +36,7 @@ public class ShoppingListFragment extends Fragment implements ShoppingListAdapte
     private ShoppingListDatabase database;
     private ShoppingListViewModel viewModel;
     private Product newProduct;
+    private Context context;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -45,6 +48,8 @@ public class ShoppingListFragment extends Fragment implements ShoppingListAdapte
                              Bundle savedInstanceState) {
         binding = FragmentShoppingListBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
+        context = getContext();
+
         initViewModel();
         initRecyclerView();
         viewModel.getAllProductList();
@@ -73,7 +78,7 @@ public class ShoppingListFragment extends Fragment implements ShoppingListAdapte
     }
 
     private void showAddCategoryDialog(boolean isForEdit) {
-        AlertDialog dialogBuilder = new AlertDialog.Builder(getContext()).create();
+        AlertDialog dialogBuilder = new AlertDialog.Builder(context).create();
         View dialogView = getLayoutInflater().inflate( R.layout.insert_item_layout, null);
         EditText enterCategoryInput = dialogView.findViewById(R.id.enterCategoryInput);
         TextView createButton = dialogView.findViewById(R.id.createButton);
@@ -110,8 +115,8 @@ public class ShoppingListFragment extends Fragment implements ShoppingListAdapte
     }
 
     private void initViewModel(){
-        viewModel = new ViewModelProvider(getActivity()).get(ShoppingListViewModel.class);
-        viewModel.getProductsListObserver().observe(getActivity(), new Observer<List<Product>>() {
+        viewModel = new ViewModelProvider(((MainActivity) context)).get(ShoppingListViewModel.class);
+        viewModel.getProductsListObserver().observe(((MainActivity) context), new Observer<List<Product>>() {
             @Override
             public void onChanged(List<Product> products) {
                 try {

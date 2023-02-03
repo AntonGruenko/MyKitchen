@@ -22,6 +22,7 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 
 import com.android.volley.VolleyError;
+import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.CommentAdapter;
 import com.example.uniorproject.adapter.MealsAdapter;
@@ -43,14 +44,16 @@ import com.squareup.picasso.Picasso;
 
 import org.json.JSONObject;
 
-public class ProfileFragment extends Fragment {
+import java.util.Objects;
+
+ public class ProfileFragment extends Fragment {
     private FragmentProfileBinding binding;
     private SharedPreferences sharedPreferences;
     private SharedPreferences.Editor editor;
     private String userEmail;
     private User currentUser;
-    private RecipeFeedAdapter recipeAdapter;
-    private PostAdapter postAdapter;
+    private Context context;
+
 
 
     @Override
@@ -63,99 +66,104 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, null, false);
         View view = binding.getRoot();
+        context = getContext();
 
-        sharedPreferences = getContext().getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
+        sharedPreferences = context.getSharedPreferences("SharedPreferences", Context.MODE_PRIVATE);
         userEmail = sharedPreferences.getString("userEmail", "");
-        new VolleyAPI(getContext()).findUserByEmail(userEmail, new VolleyCallback() {
-            @Override
-            public void onSuccess(JSONObject response) {
-                currentUser = UserMapper.userFromJson(response);
-                new VolleyAPI(getContext()).findRecipesByAuthor(currentUser.getId(), new VolleyCallback() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
+        try {
+            new VolleyAPI(context).findUserByEmail(userEmail, new VolleyCallback() {
+                @Override
+                public void onSuccess(JSONObject response) {
+                    currentUser = UserMapper.userFromJson(response);
+                    new VolleyAPI(context).findRecipesByAuthor(currentUser.getId(), new VolleyCallback() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
 
+                        }
+
+                        @Override
+                        public void onError(@Nullable VolleyError error) {
+
+                        }
+                    });
+                    new VolleyAPI(context).findPostByAuthor(currentUser.getId(), new VolleyCallback() {
+                        @Override
+                        public void onSuccess(JSONObject response) {
+
+                        }
+
+                        @Override
+                        public void onError(@Nullable VolleyError error) {
+
+                        }
+                    });
+                    if (!currentUser.getProfilePic().isEmpty()) {
+                        Picasso.with(context).load(currentUser.getProfilePic()).fit().into(binding.avatarImage);
                     }
+                    binding.status.setText(currentUser.getStatus());
+                    binding.name.setText(currentUser.getName());
 
-                    @Override
-                    public void onError(@Nullable VolleyError error) {
+                    binding.recipesButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            changeFragment(new UsersPublicationsFragment(UsersPublicationsFragment.RECIPE_FRAGMENT, currentUser.getId()));
+                        }
+                    });
+                    binding.postsButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            changeFragment(new UsersPublicationsFragment(UsersPublicationsFragment.POST_FRAGMENT, currentUser.getId()));
+                        }
+                    });
 
-                    }
-                });
-                new VolleyAPI(getContext()).findPostByAuthor(currentUser.getId(), new VolleyCallback() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
+                    binding.chatsButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            ((MainActivity) context).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragment_container, new ChatsListFragment())
+                                    .commit();
+                        }
+                    });
 
-                    }
+                    binding.status.addTextChangedListener(new TextWatcher() {
+                        @Override
+                        public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                        }
 
-                    @Override
-                    public void onError(@Nullable VolleyError error) {
+                        @Override
+                        public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                            new VolleyAPI(context).updateUser(currentUser.getId(),
+                                    currentUser.getName(),
+                                    currentUser.getEmail(),
+                                    currentUser.getPassword(),
+                                    charSequence.toString(),
+                                    currentUser.getProfilePic(),
+                                    currentUser.getKcal(),
+                                    currentUser.getProteins(),
+                                    currentUser.getFats(),
+                                    currentUser.getCarbohydrates(),
+                                    currentUser.getRegistrationDate());
+                        }
 
-                    }
-                });
-                if (!currentUser.getProfilePic().isEmpty()) {
-                    Picasso.with(getContext()).load(currentUser.getProfilePic()).into(binding.avatarImage);
+                        @Override
+                        public void afterTextChanged(Editable editable) {
+                        }
+                    });
                 }
-                binding.status.setText(currentUser.getStatus());
-                binding.name.setText(currentUser.getName());
 
-                new VolleyAPI(getContext()).findMealsByUser(currentUser.getId(), new VolleyCallback() {
-                    @Override
-                    public void onSuccess(JSONObject response) {
+                @Override
+                public void onError(VolleyError error) {
 
-                    }
-                    @Override
-                    public void onError(VolleyError error) {
+                }
+            });
+        } catch (NullPointerException e){
 
-                    }
-                });
-                binding.recipesButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        changeFragment(new UsersPublicationsFragment(UsersPublicationsFragment.RECIPE_FRAGMENT, currentUser.getId()));
-                    }
-                });
-                binding.postsButton.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        changeFragment(new UsersPublicationsFragment(UsersPublicationsFragment.POST_FRAGMENT, currentUser.getId()));
-                    }
-                });
-
-                binding.status.addTextChangedListener(new TextWatcher() {
-                    @Override
-                    public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                    }
-                    @Override
-                    public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                        new VolleyAPI(getContext()).updateUser(currentUser.getId(),
-                                currentUser.getName(),
-                                currentUser.getEmail(),
-                                currentUser.getPassword(),
-                                charSequence.toString(),
-                                currentUser.getProfilePic(),
-                                currentUser.getKcal(),
-                                currentUser.getProteins(),
-                                currentUser.getFats(),
-                                currentUser.getCarbohydrates(),
-                                currentUser.getRegistrationDate());
-                    }
-                    @Override
-                    public void afterTextChanged(Editable editable) {
-                    }
-                });
-            }
-
-            @Override
-            public void onError(VolleyError error) {
-
-            }
-        });
-
-
+        }
         binding.avatarImage.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openFileChooser(getActivity(), currentUser);
+                openFileChooser(((MainActivity) context), currentUser);
             }
         });
 
@@ -189,26 +197,15 @@ public class ProfileFragment extends Fragment {
 
     }
 
-
-
-    public void updateRecipeAdapter(){
-        recipeAdapter.notifyDataSetChanged();
-    }
-
-    public void updatePostAdapter(){
-        postAdapter.notifyDataSetChanged();
-    }
-
-
     public void updateProfilePicture(Uri uri){
-        Picasso.with(getContext()).load(uri).into(binding.avatarImage);
+        Picasso.with(context).load(uri).into(binding.avatarImage);
     }
 
     private boolean changeFragment(Fragment fragment) {
         if (fragment == null) {
             return false;
         } else {
-            getActivity().getSupportFragmentManager()
+            ((MainActivity) context).getSupportFragmentManager()
                     .beginTransaction()
                     .replace(R.id.bottom_container, fragment)
                     .commit();

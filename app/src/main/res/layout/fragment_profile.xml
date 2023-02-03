@@ -10,21 +10,23 @@
         android:id="@+id/top_container"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        app:layout_constraintTop_toTopOf="parent">
+        android:layout_marginTop="4dp"
+        app:layout_constraintTop_toTopOf="parent"
+        tools:layout_editor_absoluteX="85dp">
 
         <TextView
             android:id="@+id/name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginHorizontal="16dp"
+            android:layout_marginTop="12dp"
             android:fontFamily="@font/montserratalternates_regular"
             android:gravity="center"
             android:text="Имя"
             android:textSize="20sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/avatar_image"
-            android:layout_marginTop="12dp"
-            android:layout_marginHorizontal="16dp"/>
+            app:layout_constraintTop_toBottomOf="@+id/avatar_image" />
 
         <EditText
             android:id="@+id/status"
@@ -32,51 +34,71 @@
             android:layout_height="wrap_content"
             android:layout_marginHorizontal="16dp"
             android:layout_marginTop="12dp"
+            android:fontFamily="@font/montserratalternates_regular"
             android:gravity="center"
             android:hint="Статус"
             android:textSize="20sp"
-            android:fontFamily="@font/montserratalternates_regular"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/name" />
 
         <com.google.android.material.button.MaterialButton
-            android:id="@+id/recipes_button"
+            android:id="@+id/chats_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintHorizontal_weight="1"
-            android:text="Рецепты"
-            android:textColor="@color/black"
             android:fontFamily="@font/montserratalternates_regular"
+            android:text="Сообщения"
             android:textAllCaps="false"
+            android:textColor="@color/black"
             android:textSize="16sp"
-            app:cornerRadius="32dp"
             app:backgroundTint="@color/light_orange"
-            android:layout_marginTop="8dp"
-            app:layout_constraintEnd_toStartOf="@id/statistics_button"
-            app:layout_constraintStart_toStartOf="parent"
+            app:cornerRadius="32dp"
+            android:layout_marginTop="16dp"
+            app:icon="@drawable/ic_baseline_chat_24"
+            app:layout_constraintEnd_toEndOf="@+id/posts_button"
+            app:layout_constraintStart_toStartOf="@+id/recipes_button"
             app:layout_constraintTop_toBottomOf="@+id/status" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/recipes_button"
+            android:layout_width="160dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:fontFamily="@font/montserratalternates_regular"
+            android:text="Рецепты"
+            app:icon="@drawable/ic_baseline_recipe_24"
+            android:textAllCaps="false"
+            android:textColor="@color/black"
+            android:textSize="16sp"
+            app:backgroundTint="@color/light_orange"
+            app:cornerRadius="32dp"
+            app:layout_constraintEnd_toStartOf="@+id/posts_button"
+
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/chats_button" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/statistics_button"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="8dp"
             android:fontFamily="@font/montserratalternates_regular"
             android:text="Статистика"
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="16sp"
+            app:icon="@drawable/ic_baseline_insert_chart_outlined_24"
             app:backgroundTint="@color/light_orange"
             app:cornerRadius="32dp"
-            app:layout_constraintEnd_toStartOf="@id/posts_button"
-            app:layout_constraintHorizontal_weight="2"
-            app:layout_constraintStart_toEndOf="@id/recipes_button"
-            app:layout_constraintTop_toBottomOf="@+id/status" />
+            android:layout_marginTop="8dp"
+            app:layout_constraintEnd_toEndOf="@+id/posts_button"
+            app:layout_constraintHorizontal_weight="1"
+            app:layout_constraintStart_toStartOf="@+id/recipes_button"
+            app:layout_constraintTop_toBottomOf="@+id/recipes_button" />
 
         <com.google.android.material.button.MaterialButton
             android:id="@+id/posts_button"
-            android:layout_width="wrap_content"
+            android:layout_width="160dp"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
             android:fontFamily="@font/montserratalternates_regular"
@@ -84,12 +106,13 @@
             android:textAllCaps="false"
             android:textColor="@color/black"
             android:textSize="16sp"
+            app:icon="@drawable/ic_baseline_newspaper_24"
             app:backgroundTint="@color/light_orange"
             app:cornerRadius="32dp"
+            app:layout_constraintStart_toEndOf="@id/recipes_button"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_weight="1"
-            app:layout_constraintStart_toEndOf="@+id/statistics_button"
-            app:layout_constraintTop_toBottomOf="@+id/status" />
+            app:layout_constraintTop_toBottomOf="@+id/chats_button" />
 
         <com.google.android.material.imageview.ShapeableImageView
             android:id="@+id/avatar_image"
@@ -106,26 +129,7 @@
     <FrameLayout
         android:id="@+id/bottom_container"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:layout_constraintTop_toBottomOf="@id/top_container" />
-
-    <!--<androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/profile_recyclerview"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/recipes_button" />
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/meals_list"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginStart="1dp"
-        android:layout_marginEnd="1dp"
-        android:layout_marginBottom="1dp"
+        android:layout_height="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent" /> -->
+        app:layout_constraintTop_toBottomOf="@id/top_container" />
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,9 +28,9 @@ import io.realm.Realm;
 import io.realm.RealmResults;
 
 public class ShoppingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
-    private Context context;
+    private final Context context;
     private List<Product> products;
-    private ShoppingListHandler handler;
+    private final ShoppingListHandler handler;
 
     public ShoppingListAdapter(Context context, ShoppingListHandler handler) {
         this.context = context;
@@ -82,9 +82,9 @@ public class ShoppingListAdapter extends RecyclerView.Adapter<RecyclerView.ViewH
     }
 
     private class ShoppingListHolder extends RecyclerView.ViewHolder {
-        private Button deleteButton;
-        private TextView content;
-        private ImageView cameraImage;
+        private final Button deleteButton;
+        private final TextView content;
+        private final ImageView cameraImage;
         private ShoppingListAdapter shoppingListAdapter;
 
         public ShoppingListHolder(@NonNull View itemView) {
