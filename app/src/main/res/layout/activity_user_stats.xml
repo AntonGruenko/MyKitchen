@@ -1,0 +1,288 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".UserStatsActivity"
+    android:background="@color/troitsk_alpha">
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_semibold"
+            android:gravity="center"
+            android:text="Укажите свой рост, вес и возраст"
+            android:textColor="@color/black"
+            android:layout_marginTop="15dp"
+            android:textSize="20dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/filledTextField_Height"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+
+            android:layout_centerVertical="true"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/black"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_height"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/rubik_regular"
+                android:gravity="start"
+                android:backgroundTint="@color/troitsk_alpha"
+                android:hint="См"
+                android:inputType="numberDecimal"
+                android:maxLength="3"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/filledTextField_Weight"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_Weight"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:backgroundTint="@color/troitsk_alpha"
+                android:fontFamily="@font/rubik_regular"
+                android:gravity="start"
+                android:hint="Кг"
+                android:inputType="numberDecimal"
+                android:maxLength="3"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/filledTextField_Age"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            app:boxStrokeColor="@color/black"
+            app:boxStrokeWidth="1dp"
+            app:hintTextColor="@color/black"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="12dp">
+
+            <com.google.android.material.textfield.TextInputEditText
+                android:id="@+id/edit_Age"
+                android:layout_width="96dp"
+                android:layout_height="wrap_content"
+                android:fontFamily="@font/rubik_regular"
+                android:gravity="start"
+                android:hint="Лет"
+                android:backgroundTint="@color/troitsk_alpha"
+                android:inputType="numberDecimal"
+                android:maxLength="2"
+                android:textColor="@color/black"
+                android:textColorHint="@color/black"
+                android:textCursorDrawable="@null" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_semibold"
+            android:gravity="center"
+            android:text="Укажите свой пол"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/filledTextField_Weight"
+            android:layout_marginTop="15dp"/>
+
+        <RadioGroup
+            android:id="@+id/genderRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerHorizontal="true"
+            android:layout_centerVertical="true"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView2"
+            android:layout_marginTop="20dp">
+
+            <RadioButton
+                android:id="@+id/male"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Мужской"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/female"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Женский"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+        </RadioGroup>
+
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/rubik_semibold"
+            android:gravity="center"
+            android:text="Расскажите о своей активности"
+            android:textColor="@color/black"
+            android:textSize="20dp"
+            app:layout_constraintTop_toBottomOf="@+id/genderRadio" />
+
+        <RadioGroup
+            android:id="@+id/activenessRadio"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/textView3"
+            android:layout_marginTop="20dp"
+            android:layout_marginHorizontal="12dp">
+
+            <RadioButton
+                android:id="@+id/activenessVariant1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Физическая активность отсутствует"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/activenessVariant2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Умеренные тренировки 3 раза в неделю"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/activenessVariant3"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Умеренные тренировки 5 раз в неделю"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/activenessVariant4"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Интенсивные тренировки 5 раз в неделю"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/activenessVariant5"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Ежедневные тренировки"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/activenessVariant6"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Ежедневные тренировки по 2 раза в день"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+
+            <RadioButton
+                android:id="@+id/activenessVariant7"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:buttonTint="@color/troitsk"
+                android:fontFamily="@font/rubik_regular"
+                android:text="Ежедневные тренировки и физическая работа"
+                android:textColor="@color/black"
+                android:textSize="20sp" />
+        </RadioGroup>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_create"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/troitsk"
+            android:fontFamily="@font/rubik_regular"
+            android:gravity="center"
+            android:text="Создать аккаунт"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/activenessRadio" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/button_login"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:backgroundTint="@color/troitsk"
+            android:fontFamily="@font/rubik_regular"
+            android:gravity="center"
+            android:text="Войти"
+            android:textAllCaps="false"
+            android:textColor="@color/white"
+            app:cornerRadius="32dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/button_create" />
+    </androidx.constraintlayout.widget.ConstraintLayout>
+</ScrollView>

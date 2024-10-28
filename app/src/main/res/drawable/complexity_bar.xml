@@ -5,5 +5,5 @@
     <item android:id="@android:id/secondaryProgress"
         android:drawable="@drawable/complexity_empty"/>
     <item android:id="@android:id/progress"
-        android:drawable="@drawable/complexity_fill"/>
+        android:drawable="@drawable/complexity_fill" />
 </layer-list>

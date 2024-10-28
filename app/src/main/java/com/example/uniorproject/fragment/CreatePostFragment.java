@@ -28,6 +28,7 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentCreatePostBinding;
@@ -45,7 +46,7 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
+
 
 import org.json.JSONObject;
 
@@ -132,7 +133,7 @@ public class CreatePostFragment extends Fragment {
         if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
             postImage = getActivity().findViewById(R.id.post_image);
-            Picasso.with(context).load(imageUri).into(postImage);
+            Glide.with(context).load(imageUri).centerCrop().into(postImage);
             postImage.setImageURI(imageUri);
             uploadPicture();
 

@@ -18,7 +18,7 @@
        style="@style/Widget.BottomNavigationView"
        android:layout_width="match_parent"
        android:layout_height="48dp"
-       android:background="@color/light_orange"
+       android:background="@color/troitsk"
        app:itemIconTint="@color/white"
        app:itemTextColor="@color/white"
        app:labelVisibilityMode="selected"

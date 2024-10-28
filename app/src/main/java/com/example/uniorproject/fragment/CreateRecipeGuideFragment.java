@@ -49,6 +49,11 @@ public class CreateRecipeGuideFragment extends Fragment {
         binding.buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                for (int i = 0; i < NoDb.GUIDE_LIST.size(); i++){
+                    if (NoDb.GUIDE_LIST.get(i).equals("")){
+                        NoDb.GUIDE_LIST.remove(i);
+                    }
+                }
                 NoDb.GUIDE_LIST.add("");
                 NoDb.PICTURE_LINK_LIST.add("");
                 recipeCreatorAdapter.notifyItemInserted(NoDb.GUIDE_LIST.size());
@@ -59,6 +64,11 @@ public class CreateRecipeGuideFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(NoDb.GUIDE_LIST.size() > 0 && !(NoDb.GUIDE_LIST.size() == 1 && NoDb.GUIDE_LIST.get(0).equals(""))) {
+                    for (int i = 0; i < NoDb.GUIDE_LIST.size(); i++){
+                        if (NoDb.GUIDE_LIST.get(i).equals("")){
+                            NoDb.GUIDE_LIST.remove(i);
+                        }
+                    }
                     ((MainActivity) context).getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.create_container, new SetRecipeTagsFragment(), "setTags")

@@ -12,10 +12,12 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.uniorproject.R;
 import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.noDb.NoDb;
-import com.squareup.picasso.Picasso;
+
 
 import java.util.List;
 
@@ -54,12 +56,10 @@ public class RecipeDataAdapter extends RecyclerView.Adapter<RecipeDataAdapter.Re
                 holder.getAdapterPosition()+1,
                 elements.get(holder.getAdapterPosition())));
 
-        Picasso.with(context).setLoggingEnabled(true);
-
         if(contentType == 2) {
             try {
                 try {
-                    Picasso.with(context).load(NoDb.PICTURE_LIST.get(position + 1).getLink()).into(holder.elementImage);
+                    Glide.with(context).load(NoDb.PICTURE_LIST.get(position + 1).getLink()).apply(new RequestOptions().override(768, 576)).centerCrop().into(holder.elementImage);
                 }
                 catch (IllegalArgumentException e){}
             }

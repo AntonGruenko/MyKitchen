@@ -22,6 +22,7 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.bumptech.glide.Glide;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.database.ProductsDatabaseHelper;
@@ -29,8 +30,6 @@ import com.example.uniorproject.noDb.NoDb;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 import java.net.URL;
@@ -72,7 +71,7 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
         else {
             ((RecipeCreatorHolder) holder).editContent.setHint("Шаг");
             try {
-                Picasso.with(context).load(NoDb.PICTURE_LINK_LIST.get(pos)).placeholder(R.drawable.ic_baseline_camera_alt_24).into(((RecipeCreatorHolder) holder).contentImage);
+                Glide.with(context).load(NoDb.PICTURE_LINK_LIST.get(pos)).placeholder(R.drawable.ic_baseline_camera_alt_24).centerCrop().into(((RecipeCreatorHolder) holder).contentImage);
             }
             catch (IllegalArgumentException e){
 
@@ -181,7 +180,7 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
                     }
                     else if(fragmentType == 2 && NoDb.GUIDE_LIST.size() > 1 && position != -1){
                         NoDb.GUIDE_LIST.remove(position);
-                        Picasso.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).fit().into(contentImage);
+                        Glide.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).centerCrop().into(contentImage);
                         NoDb.PICTURE_LINK_LIST.remove(position);
                         recipeCreatorAdapter.notifyItemRemoved(position);
                     }
@@ -193,7 +192,7 @@ public class RecipeCreatorAdapter extends RecyclerView.Adapter<RecyclerView.View
                 contentImage.setVisibility(View.GONE);
             }
             else {
-                Picasso.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).fit().into(contentImage);
+                Glide.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).centerCrop().into(contentImage);
             }
 
         }

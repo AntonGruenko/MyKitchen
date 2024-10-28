@@ -17,6 +17,7 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.CommentAdapter;
@@ -35,7 +36,7 @@ import com.example.uniorproject.domain.mapper.UserMapper;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
 import com.example.uniorproject.rest.VolleyCallback;
-import com.squareup.picasso.Picasso;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -77,7 +78,6 @@ public class RecipeFragment extends Fragment {
         this.fromFragment = fromFragment;
         this.userId = userId;
     }
-
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -154,41 +154,41 @@ public class RecipeFragment extends Fragment {
         binding.recipeRecommendations.setText("Рекомендации: " + recipe.getReccomendations());
 
         if(recipe.getComplexity() == 1){
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage2);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage2);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
         else if(recipe.getComplexity() == 2){
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage3);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
         else if(recipe.getComplexity() == 3){
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage4);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
 
         else if(recipe.getComplexity() == 4){
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
-            Picasso.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
+            Glide.with(context).load(R.drawable.chef_hat_32).into(binding.recipeComplexityImage5);
         }
 
         else if(recipe.getComplexity() == 5){
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
-            Picasso.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage5);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage1);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage2);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage3);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage4);
+            Glide.with(context).load(R.drawable.chef_hat_32_filled).into(binding.recipeComplexityImage5);
         }
 
         ingredients = convertStringToList(recipe.getIngredients());

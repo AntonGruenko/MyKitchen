@@ -14,7 +14,8 @@
         android:layout_marginStart="10dp"
         android:layout_marginEnd="10dp"
         android:layout_marginTop="05dp"
-        android:layout_marginBottom="05dp">
+        android:layout_marginBottom="05dp"
+        android:background="@drawable/item_background">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
@@ -26,7 +27,7 @@
                 android:layout_height="wrap_content"
                 android:backgroundTint="@color/white"
                 app:icon="@drawable/ic_baseline_cancel_24"
-                app:iconTint="@color/light_orange"
+                app:iconTint="@color/troitsk"
                 app:iconPadding="0dp"
                 app:iconGravity="textStart"
                 android:layout_marginLeft="10dp"
@@ -41,7 +42,7 @@
                 style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
-                android:fontFamily="@font/montserratalternates_regular"
+                android:fontFamily="@font/rubik_regular"
                 android:gravity="center_vertical"
                 android:textSize="22sp"
                 android:layout_marginHorizontal="10dp"

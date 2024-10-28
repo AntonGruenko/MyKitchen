@@ -5,6 +5,8 @@ public class Picture {
     private String link;
     private Recipe recipe;
     private int number;
+    private int width;
+    private int height;
 
     public int getId() {
         return id;
@@ -36,6 +38,22 @@ public class Picture {
 
     public void setNumber(int number) {
         this.number = number;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public void setWidth(int width) {
+        this.width = width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
+    public void setHeight(int height) {
+        this.height = height;
     }
 
     public Picture(int id, String link, Recipe recipe, int number) {

@@ -17,16 +17,19 @@ import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
 import com.example.uniorproject.databinding.ActivityRegisterBinding;
 import com.example.uniorproject.domain.User;
 import com.example.uniorproject.domain.mapper.UserMapper;
 import com.example.uniorproject.rest.VolleyAPI;
 import com.example.uniorproject.rest.VolleyCallback;
+import com.google.android.gms.auth.api.identity.BeginSignInRequest;
+import com.google.android.gms.auth.api.identity.SignInClient;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
+
 
 import org.json.JSONObject;
 
@@ -45,13 +48,15 @@ public class RegisterActivity extends AppCompatActivity {
     private final StorageReference storageReference = FirebaseStorage.getInstance().getReference("avatars");
     private Uri imageUri;
     private ImageView avatarImage;
+    private SignInClient oneTapClient;
+    private BeginSignInRequest signUpRequest;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityRegisterBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
-        Picasso.with(this).setLoggingEnabled(true);
+        Glide.with(this);
         avatarImage = findViewById(R.id.avatar_image);
 
         binding.buttonCreate.setOnClickListener(new View.OnClickListener() {
@@ -131,7 +136,7 @@ public class RegisterActivity extends AppCompatActivity {
         if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
             avatarImage = findViewById(R.id.avatar_image);
-            Picasso.with(this).load(imageUri).fit().into(avatarImage);
+            Glide.with(this).load(imageUri).centerCrop().into(avatarImage);
             uploadPicture();
 
         }

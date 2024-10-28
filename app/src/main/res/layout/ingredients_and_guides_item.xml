@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+
+    <com.google.android.material.button.MaterialButton
+        android:id="@+id/delete_button"
+        android:layout_width="0dp"
+        android:layout_height="64dp"
+        android:backgroundTint="@color/light_grey"
+        app:icon="@drawable/ic_baseline_cancel_24"
+        app:iconTint="@color/troitsk"
+        app:layout_constraintBottom_toBottomOf="@+id/filledTextField_Title"
+        app:layout_constraintEnd_toStartOf="@id/filledTextField_Title"
+        app:layout_constraintHorizontal_weight="1"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="@+id/filledTextField_Title" />
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/filledTextField_Title"
+        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:textColorHint="@color/black"
+        app:boxStrokeColor="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toEndOf="@+id/delete_button"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintHorizontal_weight="7">
+
+        <com.google.android.material.textfield.TextInputEditText
+            android:id="@+id/edit_content"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/light_grey"
+            android:fontFamily="@font/rubik_regular"
+            android:gravity="start"
+            android:textCursorDrawable="@null" />
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <androidx.appcompat.widget.AppCompatImageView
+        android:id="@+id/content_image"
+        android:layout_width="36dp"
+        android:layout_height="36dp"
+        android:layout_marginHorizontal="8dp"
+        android:layout_marginVertical="16dp"
+        android:backgroundTint="@color/black"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/filledTextField_Title" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

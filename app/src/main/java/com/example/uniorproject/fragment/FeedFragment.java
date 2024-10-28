@@ -1,16 +1,17 @@
 package com.example.uniorproject.fragment;
 
-import static androidx.constraintlayout.helper.widget.MotionEffect.TAG;
-
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.room.Room;
+import androidx.room.RoomDatabase;
+import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -22,11 +23,9 @@ import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.RecipeFeedAdapter;
 import com.example.uniorproject.databinding.FragmentFeedBinding;
-import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.domain.Subscription;
 import com.example.uniorproject.domain.User;
-import com.example.uniorproject.domain.mapper.PictureMapper;
 import com.example.uniorproject.domain.mapper.UserMapper;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
@@ -35,16 +34,13 @@ import com.example.uniorproject.rest.VolleyCallback;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
 
 public class FeedFragment extends Fragment {
 
     private RecipeFeedAdapter recipeFeedAdapter;
     private SharedPreferences sharedPreferences;
     private Context context;
-
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -59,6 +55,19 @@ public class FeedFragment extends Fragment {
         FragmentFeedBinding binding = FragmentFeedBinding.inflate(inflater, container, false);
         View view = binding.getRoot();
         context = getContext();
+
+        RoomDatabase.Callback myCallback = new RoomDatabase.Callback() {
+            @Override
+            public void onCreate(@NonNull SupportSQLiteDatabase db) {
+
+            }
+
+            @Override
+            public void onOpen(@NonNull SupportSQLiteDatabase db) {
+                super.onOpen(db);
+            }
+        };
+        
         binding.recipesRv.setItemAnimator(null);
         new VolleyAPI(getContext()).fillRecipe(new VolleyCallback() {
 

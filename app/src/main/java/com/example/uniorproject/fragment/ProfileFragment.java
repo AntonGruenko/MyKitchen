@@ -22,6 +22,8 @@ import android.view.ViewGroup;
 import android.webkit.MimeTypeMap;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.example.uniorproject.LoginActivity;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.adapter.CommentAdapter;
@@ -40,7 +42,7 @@ import com.example.uniorproject.rest.VolleyCallback;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Picasso;
+
 
 import org.json.JSONObject;
 
@@ -98,7 +100,7 @@ import java.util.Objects;
                         }
                     });
                     if (!currentUser.getProfilePic().isEmpty()) {
-                        Picasso.with(context).load(currentUser.getProfilePic()).fit().into(binding.avatarImage);
+                        Glide.with(context).load(currentUser.getProfilePic()).centerCrop().into(binding.avatarImage);
                     }
                     binding.status.setText(currentUser.getStatus());
                     binding.name.setText(currentUser.getName());
@@ -122,6 +124,25 @@ import java.util.Objects;
                             ((MainActivity) context).getSupportFragmentManager()
                                     .beginTransaction()
                                     .replace(R.id.fragment_container, new ChatsListFragment())
+                                    .commit();
+                        }
+                    });
+
+                    binding.buttonLogout.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View view) {
+                            sharedPreferences.edit().putBoolean("unlogined", true).apply();
+                            Intent firstLaunchIntent = new Intent(((MainActivity) context), LoginActivity.class);
+                            startActivity(firstLaunchIntent);
+                        }
+                    });
+
+                    binding.editButton.setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            ((MainActivity) context).getSupportFragmentManager()
+                                    .beginTransaction()
+                                    .replace(R.id.fragment_container, new EditProfileFragment())
                                     .commit();
                         }
                     });
@@ -198,7 +219,7 @@ import java.util.Objects;
     }
 
     public void updateProfilePicture(Uri uri){
-        Picasso.with(context).load(uri).into(binding.avatarImage);
+        Glide.with(context).load(uri).into(binding.avatarImage);
     }
 
     private boolean changeFragment(Fragment fragment) {

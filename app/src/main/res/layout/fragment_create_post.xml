@@ -38,7 +38,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:background="@color/light_grey"
-                android:fontFamily="@font/montserratalternates_regular"
+                android:fontFamily="@font/rubik_regular"
                 android:gravity="start"
                 android:hint="Текст"
                 android:textCursorDrawable="@null" />
@@ -51,13 +51,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/filledTextField_Title"
-            android:backgroundTint="@color/light_orange"
+            android:backgroundTint="@color/troitsk"
             android:text="Опубликовать"
-            android:textColor="@color/dark_grey"
+            android:textColor="@color/white"
             android:textSize="18sp"
             android:fontFamily="@font/montserratalternates_bold"
             app:icon="@drawable/ic_baseline_download_done_24"
-            app:iconTint="@color/dark_grey"
+            app:iconTint="@color/white"
             android:layout_margin="16dp"/>
     </androidx.constraintlayout.widget.ConstraintLayout>
 

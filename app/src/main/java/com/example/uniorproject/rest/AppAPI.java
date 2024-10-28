@@ -100,6 +100,19 @@ public interface AppAPI {
                     int carbohydrates,
                     long registrationDate);
 
+    void updateUser(int id,
+                    String name,
+                    String email,
+                    String password,
+                    String status,
+                    String profilePic,
+                    int kcal,
+                    int proteins,
+                    int fats,
+                    int carbohydrates,
+                    long registrationDate,
+                    VolleyCallback callback);
+
     void addRecipe(Recipe recipe, VolleyCallback callback);
 
     void addPost(Post post, VolleyCallback callback);

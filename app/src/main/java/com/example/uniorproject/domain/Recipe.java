@@ -1,22 +1,27 @@
 package com.example.uniorproject.domain;
 
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.util.Objects;
 
 public class Recipe {
     private int id;
-    private final String name;
-    private final User author;
-    private final String ingredients;
-    private final String guide;
-    private final String reccomendations;
-    private final int time;
-    private final int kcal;
-    private final int proteins;
-    private final int fats;
-    private final int carbohydrates;
-    private final int sugar;
-    private final int complexity;
-    private final String tags;
+    private String name;
+    private User author;
+    private String ingredients;
+    private String guide;
+    private String reccomendations;
+    private int time;
+    private int kcal;
+    private int proteins;
+    private int fats;
+    private int carbohydrates;
+    private int sugar;
+    private int complexity;
+    private String tags;
 
     public Recipe(
             int id,
@@ -132,6 +137,62 @@ public class Recipe {
 
     public String getTags() {
         return tags;
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setAuthor(User author) {
+        this.author = author;
+    }
+
+    public void setIngredients(String ingredients) {
+        this.ingredients = ingredients;
+    }
+
+    public void setGuide(String guide) {
+        this.guide = guide;
+    }
+
+    public void setReccomendations(String reccomendations) {
+        this.reccomendations = reccomendations;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
+
+    public void setKcal(int kcal) {
+        this.kcal = kcal;
+    }
+
+    public void setProteins(int proteins) {
+        this.proteins = proteins;
+    }
+
+    public void setFats(int fats) {
+        this.fats = fats;
+    }
+
+    public void setCarbohydrates(int carbohydrates) {
+        this.carbohydrates = carbohydrates;
+    }
+
+    public void setSugar(int sugar) {
+        this.sugar = sugar;
+    }
+
+    public void setComplexity(int complexity) {
+        this.complexity = complexity;
+    }
+
+    public void setTags(String tags) {
+        this.tags = tags;
     }
 
     @Override

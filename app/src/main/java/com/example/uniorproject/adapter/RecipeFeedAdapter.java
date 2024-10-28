@@ -13,13 +13,15 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.uniorproject.R;
 import com.example.uniorproject.domain.Picture;
 import com.example.uniorproject.domain.Recipe;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
 import com.example.uniorproject.rest.VolleyCallback;
-import com.squareup.picasso.Picasso;
+
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -51,7 +53,8 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
 
     @Override
     public void onBindViewHolder(@NonNull RecyclerView.ViewHolder holder, int position) {
-        Recipe recipe = recipeList.get(position);
+        int pos = holder.getAdapterPosition();
+        Recipe recipe = recipeList.get(pos);
         int minutes, hours;
         hours = recipe.getTime()/60;
         minutes = recipe.getTime() - hours * 60;
@@ -82,10 +85,10 @@ public class RecipeFeedAdapter extends RecyclerView.Adapter<RecyclerView.ViewHol
         });
         try {
             for(int i = 0; i < NoDb.PICTURE_LIST.size(); i++) {
-                String link = pictureList.get(position).getLink();
-                if(NoDb.PICTURE_LIST.get(i).getRecipe().getId() == recipe.getId()) {
+                String link = pictureList.get(pos).getLink();
+                if(NoDb.PICTURE_LIST.get(i).getRecipe().getId() == recipe.getId() ) {
                     if (!NoDb.PICTURE_LIST.get(i).getLink().isEmpty()) {
-                        Picasso.with(context).load(NoDb.PICTURE_LIST.get(i).getLink()).resize(512, 512).into(((RecipeHolder) holder).imageView);
+                        Glide.with(context).load(NoDb.PICTURE_LIST.get(i).getLink()).apply(new RequestOptions().override(768, 576)).centerCrop().into(((RecipeHolder) holder).imageView);
                     }
                     break;
                 }

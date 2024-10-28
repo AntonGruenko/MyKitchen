@@ -5,7 +5,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".fragment.ChatFragment">
+    tools:context=".fragment.ChatFragment"
+    android:background="@color/troitsk_alpha">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
@@ -14,7 +15,7 @@
             android:id="@+id/receiver_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:fontFamily="@font/montserratalternates_medium"
+            android:fontFamily="@font/rubik_medium"
             android:gravity="center"
             android:textSize="22sp"
             android:layout_marginVertical="20dp"
@@ -49,7 +50,7 @@
             android:layout_height="64dp"
             android:layout_marginVertical="16dp"
             android:layout_marginStart="8dp"
-            android:fontFamily="@font/montserratalternates_medium"
+            android:fontFamily="@font/rubik_medium"
             android:hint="Сообщение"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/add_message"
@@ -62,11 +63,11 @@
             android:layout_width="0dp"
             android:layout_height="64dp"
             android:layout_marginEnd="8dp"
-            android:backgroundTint="@color/light_orange"
+            android:backgroundTint="@color/troitsk"
             app:icon="@drawable/ic_baseline_send_24"
             app:iconGravity="textEnd"
             app:iconPadding="0dp"
-            app:iconTint="@color/dark_grey"
+            app:iconTint="@color/white"
             app:layout_constraintBottom_toBottomOf="@+id/message_edit_text"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_weight="1"

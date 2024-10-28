@@ -21,6 +21,7 @@ import android.webkit.MimeTypeMap;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import com.bumptech.glide.Glide;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.databinding.FragmentCreateRecipeBinding;
@@ -30,8 +31,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
+
 
 public class CreateRecipeFragment extends Fragment {
     private Uri imageUri;
@@ -53,9 +53,15 @@ public class CreateRecipeFragment extends Fragment {
         View view = binding.getRoot();
         context = getContext();
 
+        sharedPreferences = ((MainActivity) context).getSharedPreferences("recipeSharedPreferences", Context.MODE_PRIVATE);
+        editor = sharedPreferences.edit();
+        editor.putString("mainPicture", "");
+        editor.apply();
+
+
         NoDb.PICTURE_LINK_LIST.add("");
         ImageView recipeImage = view.findViewById(R.id.recipe_image);
-        Picasso.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).fit().into(recipeImage);
+        Glide.with(context).load(R.drawable.ic_baseline_camera_alt_24).placeholder(R.drawable.ic_baseline_camera_alt_24).centerCrop().into(recipeImage);
         binding.buttonNext.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -112,7 +118,7 @@ public class CreateRecipeFragment extends Fragment {
         if(requestCode == 1 && resultCode == RESULT_OK && data != null && data.getData() != null){
             imageUri = data.getData();
             recipeImage = getActivity().findViewById(R.id.recipe_image);
-            Picasso.with(context).load(imageUri).fit().into(recipeImage);
+            Glide.with(context).load(imageUri).centerCrop().into(recipeImage);
             recipeImage.setImageURI(imageUri);
             uploadPicture();
 

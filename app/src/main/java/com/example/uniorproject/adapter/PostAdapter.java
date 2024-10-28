@@ -14,6 +14,8 @@ import androidx.annotation.Nullable;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.volley.VolleyError;
+import com.bumptech.glide.Glide;
+import com.bumptech.glide.request.RequestOptions;
 import com.example.uniorproject.MainActivity;
 import com.example.uniorproject.R;
 import com.example.uniorproject.domain.Post;
@@ -26,8 +28,6 @@ import com.example.uniorproject.fragment.AnotherProfileFragment;
 import com.example.uniorproject.noDb.NoDb;
 import com.example.uniorproject.rest.VolleyAPI;
 import com.example.uniorproject.rest.VolleyCallback;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -72,21 +72,11 @@ public class PostAdapter extends RecyclerView.Adapter<PostAdapter.PostHolder> {
             }
         });
         if(!post.getPicture().isEmpty()) {
-            Picasso.with(context)
+            Glide.with(context)
                     .load(post.getPicture())
-                    .resize(512, 512)
-                    .into(holder.itemImage, new Callback() {
-
-                        @Override
-                        public void onSuccess() {
-
-                        }
-
-                        @Override
-                        public void onError() {
-                            holder.itemImage.setVisibility(View.GONE);
-                        }
-                    });
+                    .apply(new RequestOptions().override(256, 256))
+                    .centerCrop()
+                    .into(holder.itemImage);
         }
 
         new VolleyAPI(context).findUserByEmail(sharedPreferences.getString("userEmail", ""), new VolleyCallback() {

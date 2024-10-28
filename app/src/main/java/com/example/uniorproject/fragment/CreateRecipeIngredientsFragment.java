@@ -120,6 +120,11 @@ public class CreateRecipeIngredientsFragment extends Fragment {
         binding.buttonAdd.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                for (int i = 0; i < NoDb.INGREDIENTS_LIST.size(); i++){
+                    if (NoDb.INGREDIENTS_LIST.get(i).equals("")){
+                        NoDb.INGREDIENTS_LIST.remove(i);
+                    }
+                }
                 NoDb.INGREDIENTS_DATABASE_LIST.add(new Pair<>(0, 0f));
                 NoDb.INGREDIENTS_LIST.add("");
                 recipeCreatorAdapter.notifyItemInserted(NoDb.INGREDIENTS_LIST.size());
@@ -130,6 +135,11 @@ public class CreateRecipeIngredientsFragment extends Fragment {
             @Override
             public void onClick(View view) {
                 if(NoDb.INGREDIENTS_LIST.size() > 0 && !(NoDb.INGREDIENTS_LIST.size() == 1 && NoDb.INGREDIENTS_LIST.get(0).equals(""))) {
+                    for (int i = 0; i < NoDb.INGREDIENTS_LIST.size(); i++){
+                        if (NoDb.INGREDIENTS_LIST.get(i).equals("")){
+                            NoDb.INGREDIENTS_LIST.remove(i);
+                        }
+                    }
                     ((MainActivity) context).getSupportFragmentManager()
                             .beginTransaction()
                             .replace(R.id.create_container, new CreateRecipeGuideFragment(), "setGuide")

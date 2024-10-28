@@ -1,7 +1,6 @@
 package com.example.uniorproject.rest;
 
 import android.content.Context;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 
@@ -15,7 +14,6 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 import com.example.uniorproject.MainActivity;
-import com.example.uniorproject.adapter.RecipeSearchAdapter;
 import com.example.uniorproject.domain.Day;
 import com.example.uniorproject.domain.Meal;
 import com.example.uniorproject.domain.Message;
@@ -54,9 +52,9 @@ public class VolleyAPI implements AppAPI{
 
     public static final String API = "API";
     private final Context context;
-    public static final String BASE_URL = "https://a36d-91-227-189-93.eu.ngrok.io";
+    public static final String BASE_URL = "https://1bc3-91-227-189-27.ngrok-free.app";
     private final Response.ErrorListener errorListener;
-
+    
     public VolleyAPI(Context context) {
         this.context = context;
         errorListener = error -> {
@@ -1576,6 +1574,60 @@ public class VolleyAPI implements AppAPI{
                     @Override
                     public void onResponse(String response) {
                         fillUser();
+                    }
+                },
+                errorListener) {
+            @Nullable
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+
+                Map<String, String> params = new HashMap<>();
+
+                params.put("name", name);
+                params.put("email", email);
+                params.put("password", password);
+                params.put("status", status);
+                params.put("profilePic", profilePic);
+                params.put("kcal", String.valueOf(kcal));
+                params.put("proteins", String.valueOf(proteins));
+                params.put("fats", String.valueOf(fats));
+                params.put("carbohydrates", String.valueOf(carbohydrates));
+                params.put("registrationDate", String.valueOf(registrationDate));
+
+                return params;
+            }
+        };
+
+        requestQueue.add(stringRequest);
+
+    }
+
+    @Override
+    public void updateUser(int id,
+                           String name,
+                           String email,
+                           String password,
+                           String status,
+                           String profilePic,
+                           int kcal,
+                           int proteins,
+                           int fats,
+                           int carbohydrates,
+                           long registrationDate,
+                           VolleyCallback callback) {
+        String url = BASE_URL + "/user/" + id;
+        RequestQueue requestQueue = Volley.newRequestQueue(context);
+
+
+        StringRequest stringRequest = new StringRequest(
+                Request.Method.PUT,
+                url,
+                new Response.Listener<String>(){
+
+                    @Override
+                    public void onResponse(String response) {
+                        fillUser();
+                        callback.onSuccess(null);
                     }
                 },
                 errorListener) {
